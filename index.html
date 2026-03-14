@@ -119,10 +119,12 @@ html, body {
 #top-bar {
   position: fixed; top: 0; left: 0; right: 0;
   height: 52px;
-  display: flex; align-items: center; justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
   padding: 0 28px;
   border-bottom: 1px solid rgba(245,166,35,0.1);
-  background: rgba(13,15,26,0.85);
+  background: rgba(13,15,26,0.88);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   z-index: 10;
@@ -130,68 +132,86 @@ html, body {
   transform: translateY(-52px);
   transition: opacity 380ms ease, transform 380ms var(--transition-scene);
 }
- 
+
 #top-bar.visible {
   opacity: 1; pointer-events: all;
   transform: translateY(0);
 }
- 
+
+/* Logo — left col, clickable */
 .top-logo {
   font-family: var(--font-display);
   font-size: 15px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: var(--amber);
-  cursor: default;
+  cursor: pointer;
   user-select: none;
+  background: none; border: none; padding: 0;
+  position: relative;
+  transition: color 220ms ease;
+  justify-self: start;
 }
- 
-.top-logo span {
-  color: var(--warm-white);
-  opacity: 0.5;
-  margin-left: 6px;
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 300;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  vertical-align: middle;
+.top-logo::after {
+  content: '';
+  position: absolute; bottom: -2px; left: 0; right: 100%;
+  height: 1px; background: var(--amber);
+  transition: right 260ms ease;
 }
- 
+.top-logo:hover { color: var(--amber-bright); }
+.top-logo:hover::after { right: 0; }
+.top-logo:focus-visible { outline: 1px solid var(--amber); outline-offset: 4px; }
+
+/* Song badge — center col */
 #song-badge {
   display: flex; align-items: center; gap: 10px;
-  font-size: 12px;
   opacity: 0;
-  transform: translateX(10px);
-  transition: opacity 400ms ease 200ms, transform 400ms ease 200ms;
+  transform: translateY(-4px);
+  transition: opacity 380ms ease 150ms, transform 380ms ease 150ms;
+  justify-self: center;
 }
- 
-#song-badge.visible { opacity: 1; transform: translateX(0); }
- 
+#song-badge.visible { opacity: 1; transform: translateY(0); }
+
 .badge-bar {
-  width: 2px; height: 28px;
-  background: var(--amber);
-  opacity: 0.7;
+  width: 1px; height: 24px;
+  background: rgba(245,166,35,0.45);
+  flex-shrink: 0;
 }
- 
-.badge-text { line-height: 1.3; }
-.badge-title { font-weight: 400; color: var(--warm-white); font-size: 12px; }
-.badge-artist { color: var(--warm-grey); font-size: 11px; }
- 
-#start-over {
+.badge-text { line-height: 1.3; text-align: center; }
+.badge-title {
+  font-family: var(--font-serif);
+  font-size: 13px; font-weight: 400;
+  color: var(--warm-white);
+  letter-spacing: 0.01em;
+}
+.badge-artist {
+  font-family: var(--font-sans);
+  color: var(--warm-grey);
   font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+}
+.badge-bar-r {
+  width: 1px; height: 24px;
+  background: rgba(245,166,35,0.45);
+  flex-shrink: 0;
+}
+
+/* Start over — right col */
+#start-over {
+  font-size: 10px;
   font-family: var(--font-sans);
   font-weight: 400;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--warm-grey);
+  color: var(--warm-grey-2);
   background: none; border: none;
   cursor: pointer;
   padding: 4px 0;
   position: relative;
   transition: color 220ms ease;
   display: none;
+  justify-self: end;
 }
- 
 #start-over::after {
   content: '';
   position: absolute; bottom: 0; left: 0; right: 100%;
@@ -199,7 +219,6 @@ html, body {
   background: var(--amber);
   transition: right 280ms ease;
 }
- 
 #start-over:hover { color: var(--amber); }
 #start-over:hover::after { right: 0; }
 #start-over:focus-visible { outline: 1px solid var(--amber); outline-offset: 4px; }
@@ -435,7 +454,6 @@ html, body {
   width: 100%;
   background: transparent;
   border: none;
-  color: var(--amber);
   padding: 0;
   cursor: pointer;
   position: relative;
@@ -452,7 +470,7 @@ html, body {
   position: absolute;
   width: 10px; height: 10px;
   transition: width 300ms ease, height 300ms ease, opacity 300ms ease;
-  opacity: 0.45;
+  opacity: 0.4;
   z-index: 2;
 }
 #generateBtn::before {
@@ -481,38 +499,31 @@ html, body {
   gap: 8px;
 }
 
-/* Shimmer sweep on hover */
 .btn-inner::before {
   content: '';
   position: absolute;
   top: 0; left: -100%;
   width: 55%; height: 100%;
-  background: linear-gradient(
-    105deg,
-    transparent 20%,
-    rgba(245,166,35,0.1) 50%,
-    transparent 80%
-  );
+  background: linear-gradient(105deg, transparent 20%, rgba(245,166,35,0.09) 50%, transparent 80%);
   transform: skewX(-15deg);
-  transition: left 560ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: left 560ms cubic-bezier(0.4,0,0.2,1);
   pointer-events: none;
 }
 #generateBtn:hover .btn-inner::before { left: 170%; }
 
-/* Horizontal amber rule between lines */
 .btn-rule {
   width: 28px; height: 1px;
   background: linear-gradient(90deg, transparent, var(--amber), transparent);
-  opacity: 0.7;
+  opacity: 0.6;
   transition: width 350ms ease, opacity 300ms ease;
   flex-shrink: 0;
 }
-#generateBtn:hover .btn-rule { width: 80%; opacity: 0.4; }
+#generateBtn:hover .btn-rule { width: 80%; opacity: 0.3; }
 
 .btn-label-main {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: clamp(22px, 3.5vw, 30px);
+  font-size: clamp(22px, 3.5vw, 28px);
   line-height: 1;
   letter-spacing: 0.01em;
   color: var(--amber);
@@ -539,16 +550,15 @@ html, body {
   letter-spacing: 0.38em;
 }
 
-/* Top + bottom border only — asymmetric feel */
 .btn-frame {
   position: absolute; inset: 0;
-  border-top: 1px solid rgba(245,166,35,0.22);
-  border-bottom: 1px solid rgba(245,166,35,0.22);
+  border-top: 1px solid rgba(245,166,35,0.2);
+  border-bottom: 1px solid rgba(245,166,35,0.2);
   transition: border-color 280ms ease;
   pointer-events: none;
 }
 #generateBtn:hover .btn-frame {
-  border-color: rgba(245,166,35,0.55);
+  border-color: rgba(245,166,35,0.5);
 }
 
 #generateBtn:disabled {
@@ -593,26 +603,47 @@ html, body {
 }
  
 #results-meta {
-  padding: 20px 8px 16px;
-  display: flex; align-items: baseline; gap: 16px;
-  border-bottom: 1px solid rgba(245,166,35,0.1);
+  padding: 18px 12px 14px;
+  display: flex; align-items: center; gap: 0;
+  border-bottom: 1px solid rgba(245,166,35,0.12);
   flex-shrink: 0;
+  flex-wrap: wrap;
+  row-gap: 4px;
 }
- 
+
 .rm-title {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: clamp(20px, 2.5vw, 28px);
+  font-size: clamp(18px, 2.2vw, 24px);
   color: var(--warm-white);
   letter-spacing: -0.01em;
+  margin-right: 16px;
 }
- 
+
 .rm-meta {
-  font-size: 12px; color: var(--warm-grey);
-  letter-spacing: 0.06em;
+  display: flex; align-items: center; gap: 0;
+  flex-wrap: wrap;
 }
- 
-.rm-sep { color: var(--warm-grey-3); }
+
+.rm-pill {
+  font-size: 11px;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--warm-white);
+  opacity: 0.75;
+  padding: 3px 10px;
+  border: 1px solid rgba(245,166,35,0.18);
+  margin-right: 6px;
+  margin-bottom: 2px;
+  background: rgba(245,166,35,0.05);
+}
+
+.rm-pill strong {
+  color: var(--amber);
+  font-weight: 400;
+  opacity: 1;
+}
  
 #presets-grid {
   flex: 1;
@@ -635,16 +666,16 @@ html, body {
 .preset-card:hover { background: var(--navy-3); }
  
 .card-header {
-  padding: 20px 22px 16px;
-  border-top: 2px solid var(--amber);
+  padding: 18px 22px 14px;
+  border-top: 1px solid rgba(245,166,35,0.4);
   flex-shrink: 0;
-  background: rgba(245,166,35,0.04);
+  background: rgba(245,166,35,0.025);
 }
- 
+
 .card-ordinal {
-  font-size: 10px; letter-spacing: 0.28em;
+  font-size: 9px; letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--amber);
+  color: var(--warm-grey-2);
   font-weight: 400;
   margin-bottom: 5px;
   font-family: var(--font-sans);
@@ -717,9 +748,9 @@ html, body {
   text-align: right; font-weight: 400;
   white-space: nowrap;
 }
- 
+
 .sr-val.highlight {
-  color: var(--amber);
+  color: var(--warm-white);
   font-weight: 500;
 }
  
@@ -893,13 +924,14 @@ button { cursor: pointer; }
  
 <!-- Top Bar -->
 <div id="top-bar" role="banner">
-  <div class="top-logo">KeyMatch <span>Piano Settings</span></div>
+  <button class="top-logo" id="logo-home" aria-label="Return to home">KeyMatch</button>
   <div id="song-badge" aria-live="polite">
     <div class="badge-bar"></div>
     <div class="badge-text">
       <div class="badge-title" id="badge-title"></div>
       <div class="badge-artist" id="badge-artist"></div>
     </div>
+    <div class="badge-bar-r"></div>
   </div>
   <button id="start-over" aria-label="Start over from the beginning">Start Over</button>
 </div>
@@ -1242,8 +1274,14 @@ function renderResults(data) {
  
   // Meta
   document.getElementById('rm-title').textContent = escHtml(song.title || selectedSong.title) + '';
-  document.getElementById('rm-meta').innerHTML =
-    `<span class="rm-sep">${escHtml(song.mood || '')}${song.mood && song.tempo_bpm ? ' &middot; ' : ''}${song.tempo_bpm ? song.tempo_bpm + ' BPM' : ''}${song.key ? ' &middot; Key of ' + escHtml(song.key) : ''}</span>`;
+  const metaEl = document.getElementById('rm-meta');
+  const pills = [
+    song.mood ? `<span class="rm-pill"><strong>${escHtml(song.mood)}</strong></span>` : '',
+    song.tempo_bpm ? `<span class="rm-pill"><strong>${song.tempo_bpm}</strong> BPM</span>` : '',
+    song.key ? `<span class="rm-pill">Key of <strong>${escHtml(song.key)}</strong></span>` : '',
+    song.genre ? `<span class="rm-pill">${escHtml(song.genre)}</span>` : '',
+  ].filter(Boolean).join('');
+  metaEl.innerHTML = pills;
  
   // Cards
   const grid = document.getElementById('presets-grid');
@@ -1258,8 +1296,7 @@ function renderResults(data) {
         <div class="settings-group">
           <div class="sg-title">Voice</div>
           <div class="settings-rows">
-            ${row('Main Voice', p.voice?.main_voice, true)}
-            ${row('Voice No.', p.voice?.main_voice_number)}
+            ${row('Main Voice', p.voice?.main_voice)}
             ${row('Octave', p.voice?.octave)}
             ${row('Transpose', p.voice?.transpose)}
           </div>
@@ -1267,9 +1304,8 @@ function renderResults(data) {
         <div class="settings-group">
           <div class="sg-title">Dual Voice</div>
           <div class="settings-rows">
-            ${row('Status', p.dual?.enabled ? 'On' : 'Off', p.dual?.enabled)}
-            ${p.dual?.enabled ? row('Voice', p.dual?.voice, true) : ''}
-            ${p.dual?.enabled ? row('Voice No.', p.dual?.voice_number) : ''}
+            ${row('Status', p.dual?.enabled ? 'On' : 'Off')}
+            ${p.dual?.enabled ? row('Voice', p.dual?.voice) : ''}
             ${p.dual?.enabled ? row('Volume', p.dual?.volume ?? '—') : ''}
           </div>
         </div>
@@ -1293,9 +1329,8 @@ function renderResults(data) {
         <div class="settings-group">
           <div class="sg-title">Rhythm / Tempo</div>
           <div class="settings-rows">
-            ${row('Rhythm Style', p.rhythm?.style, true)}
-            ${row('Style No.', p.rhythm?.style_number)}
-            ${row('Tempo', p.rhythm?.tempo ? p.rhythm.tempo + ' BPM' : '—', true)}
+            ${row('Rhythm Style', p.rhythm?.style)}
+            ${row('Tempo', p.rhythm?.tempo ? p.rhythm.tempo + ' BPM' : '—')}
             ${row('Intro', p.rhythm?.intro)}
             ${row('Fill-in', p.rhythm?.fill)}
           </div>
@@ -1353,7 +1388,7 @@ function copyCard(btn, idx) {
   });
   navigator.clipboard.writeText(text).then(() => {
     btn.classList.add('copied');
-    btn.innerHTML = `<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Copied ✓`;
+    btn.innerHTML = `Copied ✓`;
     setTimeout(() => {
       btn.classList.remove('copied');
       btn.innerHTML = `<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy Settings`;
@@ -1402,6 +1437,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const songInput = document.getElementById('songSearch');
   const generateBtn = document.getElementById('generateBtn');
   const startOver = document.getElementById('start-over');
+
+  // Logo click → back to scene 1
+  document.getElementById('logo-home').addEventListener('click', () => {
+    selectedSong = null;
+    document.getElementById('songSearch').value = '';
+    document.getElementById('kbInput').value = '';
+    document.getElementById('badge-title').textContent = '';
+    document.getElementById('badge-artist').textContent = '';
+    document.getElementById('song-badge').classList.remove('visible');
+    clearError();
+    document.getElementById('presets-grid').innerHTML = '';
+    goToScene(1);
+    setTimeout(() => document.getElementById('songSearch').focus(), 450);
+  });
  
   // Search with debounce
   songInput.addEventListener('input', () => {
