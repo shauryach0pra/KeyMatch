@@ -495,17 +495,17 @@ Analyze this song deeply and produce 3 complete preset configurations for the ${
     const raw = await callGemini(prompt, system);
     let data;
     try {
-      let clean = raw.trim();
-      // Strip markdown fences
-      clean = clean.replace(/```json\n?/gi, '').replace(/```\n?/gi, '').trim();
-      // If the whole thing is a JSON-encoded string (starts/ends with quote), unwrap it
-      if (clean.startsWith('"') && clean.endsWith('"')) {
-        clean = JSON.parse(clean);
-      }
-      // Extract the JSON object
-      const match = clean.match(/\{[\s\S]*\}/);
-      if (!match) throw new Error('no json found');
-      data = JSON.parse(match[0]);
+      // Normalize: force to string, strip ALL markdown fences aggressively
+      let clean = String(raw)
+        .replace(/^```json\s*/i, '')
+        .replace(/^```\s*/i, '')
+        .replace(/```\s*$/i, '')
+        .trim();
+      // Find the JSON object
+      const start = clean.indexOf('{');
+      const end = clean.lastIndexOf('}');
+      if (start === -1 || end === -1) throw new Error('no json found');
+      data = JSON.parse(clean.slice(start, end + 1));
     } catch (e) {
       console.error('Raw Gemini response:', raw);
       throw new Error('Could not parse response. Please try again.');
