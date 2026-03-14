@@ -345,7 +345,7 @@ Return exactly 5 real songs that match the search query.`;
     const text = await callGemini(`Search query: "${query}". Return 5 matching real songs as a JSON array.`, system);
     let songs;
     try {
-      const clean = text.replace(/```json|```/g, '').trim();
+      let clean = text.replace(/```json\n?/gi, '').replace(/```\n?/gi, '').trim();
       // Handle cases where Gemini wraps in extra text
       const match = clean.match(/\[[\s\S]*\]/);
       songs = JSON.parse(match ? match[0] : clean);
