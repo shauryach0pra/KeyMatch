@@ -484,7 +484,9 @@ Required structure:
   ]
 }
 
-Provide exactly 3 presets with different creative approaches (e.g. Classic, Modern, Cinematic). Use real voice and rhythm names that actually exist on the specified keyboard model.`;
+Provide exactly 3 presets with different creative approaches (e.g. Classic, Modern, Cinematic). Use real voice and rhythm names that actually exist on the specified keyboard model.
+
+CRITICAL: Your entire response must be ONLY the JSON object. Start your response with { and end with }. No text before, no text after, no markdown fences, no backticks.`;
 
   const prompt = `Song: "${selectedSong.title}" by ${selectedSong.artist} (${selectedSong.year}, ${selectedSong.genre || 'Pop'})
 Keyboard model: ${kb}
@@ -495,10 +497,19 @@ Analyze this song deeply and produce 3 complete preset configurations for the ${
     const raw = await callGemini(prompt, system);
     let data;
     try {
-      const clean = raw.replace(/```json|```/g, '').trim();
+      // Strip any markdown fences Gemini might add despite instructions
+      const clean = raw
+        .replace(/```json[\s\S]*?```/g, m => m.slice(7, -3))
+        .replace(/```[\s\S]*?```/g, m => m.slice(3, -3))
+        .replace(/`/g, '')
+        .trim();
       const match = clean.match(/\{[\s\S]*\}/);
-      data = JSON.parse(match ? match[0] : clean);
-    } catch { throw new Error('Could not parse response. Please try again.'); }
+      if (!match) throw new Error('no json found');
+      data = JSON.parse(match[0]);
+    } catch (e) {
+      console.error('Raw Gemini response:', raw);
+      throw new Error('Could not parse response. Please try again.');
+    }
     renderResults(data);
   } catch (err) {
     showError(err.message);
