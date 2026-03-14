@@ -6,981 +6,401 @@
 <title>KeyMatch — Piano Settings Finder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&family=Noto+Serif:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
+/* ── TOKENS ─────────────────────────────────────────────────── */
 :root {
-  --navy: #0d0f1a;
-  --navy-2: #111422;
-  --navy-3: #161928;
-  --navy-4: #1c2035;
-  --navy-5: #222640;
-  --amber: #f5a623;
-  --amber-bright: #ffbf4d;
-  --amber-dim: #a06b0f;
+  --navy:       #0d0f1a;
+  --navy-2:     #111422;
+  --navy-3:     #161928;
+  --amber:      #f5a623;
+  --amber-dim:  #a06b0f;
   --amber-pale: #ffd98a;
-  --amber-glow: rgba(245,166,35,0.15);
-  --amber-glow2: rgba(245,166,35,0.07);
   --warm-white: #f0ead8;
-  --warm-grey: #8a8a96;
-  --warm-grey-2: #5a5a68;
-  --warm-grey-3: #383848;
-  --error: #e05555;
-  --success: #4db87a;
-  --font-sans: 'DM Sans', system-ui, sans-serif;
-  --font-serif: 'Noto Serif', Georgia, serif;
-  --font-display: 'DM Serif Display', Georgia, serif;
-  --transition-scene: cubic-bezier(0.76, 0, 0.24, 1);
+  --grey:       #8a8a96;
+  --grey-2:     #5a5a68;
+  --grey-3:     #2e2e3e;
+  --error:      #e05555;
+  --success:    #4db87a;
+  /* Typography: DM Serif Display for all headings/brand, DM Sans for all body/UI */
+  --f-head: 'DM Serif Display', Georgia, serif;
+  --f-body: 'DM Sans', system-ui, sans-serif;
+  --ease:   cubic-bezier(0.76, 0, 0.24, 1);
 }
- 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
-html, body {
-  width: 100%; height: 100%;
-  overflow: hidden;
-  background: var(--navy);
-  color: var(--warm-white);
-  font-family: var(--font-sans);
-  font-weight: 300;
-  cursor: default;
-  -webkit-font-smoothing: antialiased;
-}
- 
-/* ── BACKGROUND ────────────────────────────────────────────── */
-#bg {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-}
- 
+html, body { width:100%; height:100%; overflow:hidden; background:var(--navy); color:var(--warm-white); font-family:var(--f-body); font-weight:300; -webkit-font-smoothing:antialiased; }
+
+/* ── BACKGROUND ─────────────────────────────────────────────── */
+#bg { position:fixed; inset:0; z-index:0; pointer-events:none; }
 #bg-base {
-  position: absolute; inset: 0;
+  position:absolute; inset:0;
   background:
     radial-gradient(ellipse 70% 60% at 15% 20%, rgba(245,166,35,0.06) 0%, transparent 60%),
     radial-gradient(ellipse 50% 50% at 85% 80%, rgba(245,166,35,0.04) 0%, transparent 55%),
     radial-gradient(ellipse 100% 100% at 50% 50%, var(--navy-2) 0%, var(--navy) 100%);
 }
- 
 #bg-grid {
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(245,166,35,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(245,166,35,0.025) 1px, transparent 1px);
+  position:absolute; inset:0;
+  background-image: linear-gradient(rgba(245,166,35,0.022) 1px,transparent 1px), linear-gradient(90deg,rgba(245,166,35,0.022) 1px,transparent 1px);
   background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
 }
- 
-#bg-vignette {
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse 120% 120% at 50% 50%, transparent 35%, rgba(5,7,14,0.92) 100%);
-}
- 
-#bg-noise {
-  position: absolute; inset: 0;
-  opacity: 0.04;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
- 
+#bg-vignette { position:absolute; inset:0; background:radial-gradient(ellipse 120% 120% at 50% 50%, transparent 30%, rgba(5,7,14,0.94) 100%); }
+#bg-noise { position:absolute; inset:0; opacity:0.04; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
 /* ── SCENES ─────────────────────────────────────────────────── */
-#stage {
-  position: fixed; inset: 0; z-index: 1;
-}
- 
+#stage { position:fixed; inset:0; z-index:1; }
 .scene {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: none;
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
 }
- 
-.scene.active {
-  opacity: 1;
-  pointer-events: all;
-}
- 
-.scene.entering {
-  animation: sceneEnter 420ms var(--transition-scene) forwards;
-}
- 
-.scene.exiting {
-  animation: sceneExit 380ms var(--transition-scene) forwards;
-}
- 
-@keyframes sceneEnter {
-  from { opacity: 0; transform: translateY(24px) scale(0.985); filter: blur(6px); }
-  to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-}
- 
-@keyframes sceneExit {
-  from { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-  to   { opacity: 0; transform: translateY(-18px) scale(1.01); filter: blur(4px); }
-}
- 
-/* ── TOP BAR (scenes 2 & 3) ─────────────────────────────────── */
-#top-bar {
-  position: fixed; top: 0; left: 0; right: 0;
-  height: 52px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  padding: 0 28px;
-  border-bottom: 1px solid rgba(245,166,35,0.1);
-  background: rgba(13,15,26,0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  z-index: 10;
-  opacity: 0; pointer-events: none;
-  transform: translateY(-52px);
-  transition: opacity 380ms ease, transform 380ms var(--transition-scene);
-}
+.scene.active { opacity:1; pointer-events:all; }
+.scene.entering { animation: sIn  420ms var(--ease) forwards; }
+.scene.exiting  { animation: sOut 360ms var(--ease) forwards; }
+/* card-shuffle: slides horizontally */
+@keyframes sIn  { from{opacity:0;transform:translateX(44px) scale(0.97);filter:blur(5px)} to{opacity:1;transform:none;filter:none} }
+@keyframes sOut { from{opacity:1;transform:none;filter:none} to{opacity:0;transform:translateX(-36px) scale(0.98);filter:blur(4px)} }
 
-#top-bar.visible {
-  opacity: 1; pointer-events: all;
-  transform: translateY(0);
-}
-
-/* Logo — left col, clickable */
-.top-logo {
-  font-family: var(--font-display);
-  font-size: 15px;
-  letter-spacing: 0.06em;
-  color: var(--amber);
-  cursor: pointer;
-  user-select: none;
-  background: none; border: none; padding: 0;
-  position: relative;
-  transition: color 220ms ease;
-  justify-self: start;
-}
-.top-logo::after {
-  content: '';
-  position: absolute; bottom: -2px; left: 0; right: 100%;
-  height: 1px; background: var(--amber);
-  transition: right 260ms ease;
-}
-.top-logo:hover { color: var(--amber-bright); }
-.top-logo:hover::after { right: 0; }
-.top-logo:focus-visible { outline: 1px solid var(--amber); outline-offset: 4px; }
-
-/* Song badge — center col */
-#song-badge {
-  display: flex; align-items: center; gap: 10px;
-  opacity: 0;
-  transform: translateY(-4px);
-  transition: opacity 380ms ease 150ms, transform 380ms ease 150ms;
-  justify-self: center;
-}
-#song-badge.visible { opacity: 1; transform: translateY(0); }
-
-.badge-bar {
-  width: 1px; height: 24px;
-  background: rgba(245,166,35,0.45);
-  flex-shrink: 0;
-}
-.badge-text { line-height: 1.3; text-align: center; }
-.badge-title {
-  font-family: var(--font-serif);
-  font-size: 13px; font-weight: 400;
-  color: var(--warm-white);
-  letter-spacing: 0.01em;
-}
-.badge-artist {
-  font-family: var(--font-sans);
-  color: var(--warm-grey);
-  font-size: 11px;
-  font-weight: 300;
-  letter-spacing: 0.04em;
-}
-.badge-bar-r {
-  width: 1px; height: 24px;
-  background: rgba(245,166,35,0.45);
-  flex-shrink: 0;
-}
-
-/* Start over — right col */
-#start-over {
-  font-size: 10px;
-  font-family: var(--font-sans);
+/* ── BRAND BLOCK — scenes 1 & 2 both show it ────────────────── */
+.brand-block { text-align:center; margin-bottom:52px; user-select:none; }
+.brand-name {
+  font-family: var(--f-head);
   font-weight: 400;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--warm-grey-2);
-  background: none; border: none;
-  cursor: pointer;
-  padding: 4px 0;
-  position: relative;
-  transition: color 220ms ease;
-  display: none;
-  justify-self: end;
-}
-#start-over::after {
-  content: '';
-  position: absolute; bottom: 0; left: 0; right: 100%;
-  height: 1px;
-  background: var(--amber);
-  transition: right 280ms ease;
-}
-#start-over:hover { color: var(--amber); }
-#start-over:hover::after { right: 0; }
-#start-over:focus-visible { outline: 1px solid var(--amber); outline-offset: 4px; }
- 
-/* ── SCENE 1: SEARCH ─────────────────────────────────────────── */
-#scene-1 { gap: 0; padding: 60px 24px; }
- 
-.s1-logomark {
-  text-align: center;
-  margin-bottom: 64px;
-  user-select: none;
-}
- 
-.s1-keymatch {
-  font-family: var(--font-display);
-  font-size: clamp(54px, 10vw, 108px);
-  line-height: 0.9;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--amber-pale) 0%, var(--amber) 40%, var(--amber-dim) 70%, var(--amber) 100%);
+  font-size: clamp(52px, 9vw, 100px);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  background: linear-gradient(140deg, var(--amber-pale) 0%, var(--amber) 45%, var(--amber-dim) 75%, var(--amber) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 60px rgba(245,166,35,0.25));
+  filter: drop-shadow(0 0 50px rgba(245,166,35,0.22));
   display: block;
 }
- 
-.s1-tagline {
-  margin-top: 14px;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(13px, 2vw, 16px);
-  color: var(--warm-grey);
-  letter-spacing: 0.04em;
-  display: block;
-}
- 
-.s1-search-wrap {
-  width: 100%;
-  max-width: 520px;
-  position: relative;
-}
- 
-.s1-label {
-  display: block;
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--amber-dim);
-  margin-bottom: 10px;
-  font-weight: 400;
-}
- 
-.search-field-wrap { position: relative; }
- 
-#songSearch {
-  width: 100%;
-  background: rgba(22,25,40,0.7);
-  border: 1px solid rgba(245,166,35,0.2);
-  border-bottom: 1px solid rgba(245,166,35,0.4);
-  color: var(--warm-white);
-  font-family: var(--font-sans);
-  font-size: 15px;
+.brand-tagline {
+  margin-top: 10px;
+  font-family: var(--f-body);
   font-weight: 300;
-  padding: 16px 48px 16px 18px;
-  outline: none;
-  appearance: none;
-  transition: border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
-  letter-spacing: 0.01em;
-}
- 
-#songSearch::placeholder {
-  color: var(--warm-grey-2);
-  animation: placeholderPulse 3s ease-in-out infinite;
-}
- 
-@keyframes placeholderPulse {
-  0%, 100% { opacity: 0.5; }
-  50%       { opacity: 1; }
-}
- 
-#songSearch:focus {
-  border-color: var(--amber);
-  box-shadow: 0 0 0 1px rgba(245,166,35,0.2), 0 4px 24px rgba(245,166,35,0.1);
-  background: rgba(28,32,53,0.9);
-}
- 
-#songSearch:focus-visible { outline: none; }
- 
-.search-icon {
-  position: absolute; right: 16px; top: 50%;
-  transform: translateY(-50%);
-  color: var(--amber-dim);
-  pointer-events: none;
-}
- 
-#searchDropdown {
-  position: absolute; top: calc(100% + 2px); left: 0; right: 0;
-  background: var(--navy-3);
-  border: 1px solid rgba(245,166,35,0.2);
-  border-top: none;
-  overflow: hidden;
-  z-index: 100;
-  max-height: 280px;
-  overflow-y: auto;
-  display: none;
-}
- 
-#searchDropdown.open { display: block; }
- 
-.dd-item {
-  padding: 13px 18px;
-  cursor: pointer;
-  border-bottom: 1px solid rgba(245,166,35,0.06);
-  transition: background 160ms ease;
-  opacity: 0;
-  transform: translateY(8px);
-  animation: ddItemIn 200ms ease forwards;
-}
- 
-.dd-item:last-child { border-bottom: none; }
-.dd-item:hover { background: rgba(245,166,35,0.08); }
-.dd-item:focus-visible { outline: 1px solid var(--amber); outline-offset: -1px; }
- 
-.dd-item-title {
-  font-size: 13px; font-weight: 400;
-  color: var(--warm-white);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.dd-item-sub {
-  font-size: 11px; color: var(--warm-grey);
-  margin-top: 2px;
-  font-style: italic;
-}
- 
-@keyframes ddItemIn {
-  to { opacity: 1; transform: translateY(0); }
-}
- 
-.dd-empty {
-  padding: 16px 18px;
-  font-size: 13px; color: var(--warm-grey-2);
-  font-style: italic;
-}
- 
-/* ── SCENE 2: KEYBOARD ───────────────────────────────────────── */
-#scene-2 { padding: 80px 24px 60px; gap: 0; }
- 
-.s2-center {
-  width: 100%; max-width: 520px;
-  display: flex; flex-direction: column; align-items: flex-start;
-  gap: 0;
-}
- 
-.s2-step-label {
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--amber-dim);
-  margin-bottom: 10px;
-  font-weight: 400;
+  font-size: clamp(12px, 1.8vw, 15px);
+  color: var(--grey);
+  letter-spacing: 0.06em;
   display: block;
-}
- 
-#kbInput {
-  width: 100%;
-  background: rgba(22,25,40,0.7);
-  border: 1px solid rgba(245,166,35,0.2);
-  border-bottom: 1px solid rgba(245,166,35,0.4);
-  color: var(--warm-white);
-  font-family: var(--font-sans);
-  font-size: 15px;
-  font-weight: 300;
-  padding: 16px 18px;
-  outline: none;
-  appearance: none;
-  transition: border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
-  letter-spacing: 0.01em;
-}
- 
-#kbInput::placeholder { color: var(--warm-grey-2); }
-#kbInput:focus {
-  border-color: var(--amber);
-  box-shadow: 0 0 0 1px rgba(245,166,35,0.2), 0 4px 24px rgba(245,166,35,0.1);
-  background: rgba(28,32,53,0.9);
-}
-#kbInput:focus-visible { outline: none; }
- 
-.chips-label {
-  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--warm-grey-2); margin: 20px 0 10px;
-  font-weight: 400; display: block;
-}
- 
-.chips-wrap {
-  width: 100%;
-  display: flex; gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 6px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 5%, black 88%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, black 5%, black 88%, transparent 100%);
-}
- 
-.chips-wrap::-webkit-scrollbar { display: none; }
- 
-.chip {
-  flex-shrink: 0;
-  background: transparent;
-  border: 1px solid rgba(245,166,35,0.25);
-  color: var(--warm-grey);
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 300;
-  letter-spacing: 0.04em;
-  padding: 6px 13px;
-  cursor: pointer;
-  transition: all 180ms ease;
-  white-space: nowrap;
-}
- 
-.chip:hover {
-  border-color: var(--amber);
-  color: var(--amber);
-  background: rgba(245,166,35,0.07);
-}
- 
-.chip:focus-visible { outline: 1px solid var(--amber); outline-offset: 2px; }
- 
-/* CTA Button */
-#generateBtn {
-  margin-top: 40px;
-  width: 100%;
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  outline: none;
 }
 
-/* Corner ticks */
-#generateBtn::before,
-#generateBtn::after {
-  content: '';
-  position: absolute;
-  width: 10px; height: 10px;
-  transition: width 300ms ease, height 300ms ease, opacity 300ms ease;
-  opacity: 0.4;
-  z-index: 2;
+/* ── SHARED INPUT ───────────────────────────────────────────── */
+.field-wrap { position:relative; width:100%; max-width:520px; }
+.field-label {
+  display:block; font-family:var(--f-body); font-size:10px; font-weight:500;
+  letter-spacing:0.22em; text-transform:uppercase; color:var(--amber-dim); margin-bottom:10px;
+}
+.text-input {
+  width:100%; background:rgba(22,25,40,0.75);
+  border:1px solid rgba(245,166,35,0.18); border-bottom-color:rgba(245,166,35,0.4);
+  color:var(--warm-white); font-family:var(--f-body); font-size:15px; font-weight:300;
+  padding:15px 42px 15px 16px; outline:none; appearance:none; letter-spacing:0.01em;
+  transition: border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
+}
+.text-input::placeholder { color:var(--grey-2); animation:phPulse 3s ease-in-out infinite; }
+.text-input:focus {
+  border-color:var(--amber);
+  box-shadow:0 0 0 1px rgba(245,166,35,0.18), 0 4px 24px rgba(245,166,35,0.1);
+  background:rgba(26,30,50,0.9);
+}
+.text-input:focus-visible { outline:none; }
+@keyframes phPulse { 0%,100%{opacity:0.45} 50%{opacity:1} }
+.field-icon { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--grey-2); pointer-events:none; }
+
+/* ── SCENE 1 ─────────────────────────────────────────────────── */
+#scene-1 { padding:60px 24px; gap:0; }
+
+#searchDropdown {
+  position:absolute; top:calc(100% + 2px); left:0; right:0;
+  background:var(--navy-3); border:1px solid rgba(245,166,35,0.18); border-top:none;
+  z-index:100; max-height:280px; overflow-y:auto; display:none;
+}
+#searchDropdown.open { display:block; }
+.dd-item {
+  padding:12px 16px; cursor:pointer; border-bottom:1px solid rgba(245,166,35,0.05);
+  opacity:0; transform:translateY(6px); animation:ddIn 180ms ease forwards;
+  transition:background 150ms ease;
+}
+.dd-item:last-child { border-bottom:none; }
+.dd-item:hover { background:rgba(245,166,35,0.07); }
+.dd-item:focus-visible { outline:1px solid var(--amber); outline-offset:-1px; }
+.dd-title { font-family:var(--f-body); font-size:13px; font-weight:400; color:var(--warm-white); }
+.dd-sub   { font-family:var(--f-body); font-size:11px; font-weight:300; color:var(--grey); margin-top:2px; }
+.dd-empty { padding:14px 16px; font-family:var(--f-body); font-size:13px; color:var(--grey-2); }
+@keyframes ddIn { to{opacity:1;transform:none} }
+
+/* ── SCENE 2 ─────────────────────────────────────────────────── */
+#scene-2 { padding:60px 24px; gap:0; }
+.s2-wrap { width:100%; max-width:520px; display:flex; flex-direction:column; align-items:flex-start; }
+
+.chips-label {
+  font-family:var(--f-body); font-size:10px; font-weight:500;
+  letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--grey-2); margin:18px 0 8px; display:block;
+}
+.chips-wrap {
+  width:100%; display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;
+  scrollbar-width:none; -ms-overflow-style:none;
+  mask-image:linear-gradient(90deg,transparent 0%,black 4%,black 88%,transparent 100%);
+}
+.chips-wrap::-webkit-scrollbar { display:none; }
+.chip {
+  flex-shrink:0; background:transparent;
+  border:1px solid rgba(245,166,35,0.22); color:var(--grey);
+  font-family:var(--f-body); font-size:11px; font-weight:300;
+  letter-spacing:0.03em; padding:6px 12px; cursor:pointer; white-space:nowrap;
+  transition: border-color 160ms, color 160ms, background 160ms;
+}
+.chip:hover { border-color:var(--amber); color:var(--amber); background:rgba(245,166,35,0.06); }
+.chip:focus-visible { outline:1px solid var(--amber); outline-offset:2px; }
+
+/* CTA — same rectangle language as inputs/chips */
+#generateBtn {
+  margin-top:32px; width:100%;
+  background:transparent; border:1px solid rgba(245,166,35,0.5);
+  color:var(--amber); font-family:var(--f-body); font-size:13px; font-weight:500;
+  letter-spacing:0.2em; text-transform:uppercase; padding:16px 24px;
+  cursor:pointer; position:relative; overflow:hidden;
+  transition:color 260ms ease;
 }
 #generateBtn::before {
-  top: 0; left: 0;
-  border-top: 1px solid var(--amber);
-  border-left: 1px solid var(--amber);
+  content:''; position:absolute; inset:0; background:var(--amber);
+  transform:translateX(-101%); transition:transform 300ms var(--ease); z-index:0;
 }
-#generateBtn::after {
-  bottom: 0; right: 0;
-  border-bottom: 1px solid var(--amber);
-  border-right: 1px solid var(--amber);
-}
-#generateBtn:hover::before,
-#generateBtn:hover::after {
-  width: 20px; height: 20px; opacity: 1;
-}
+#generateBtn span { position:relative; z-index:1; }
+#generateBtn:hover { color:var(--navy); }
+#generateBtn:hover::before { transform:translateX(0); }
+#generateBtn:disabled { opacity:0.35; cursor:not-allowed; pointer-events:none; }
+#generateBtn:focus-visible { outline:1px solid var(--amber); outline-offset:3px; }
 
-.btn-inner {
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  padding: 22px 40px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-inner::before {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 55%; height: 100%;
-  background: linear-gradient(105deg, transparent 20%, rgba(245,166,35,0.09) 50%, transparent 80%);
-  transform: skewX(-15deg);
-  transition: left 560ms cubic-bezier(0.4,0,0.2,1);
-  pointer-events: none;
-}
-#generateBtn:hover .btn-inner::before { left: 170%; }
-
-.btn-rule {
-  width: 28px; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--amber), transparent);
-  opacity: 0.6;
-  transition: width 350ms ease, opacity 300ms ease;
-  flex-shrink: 0;
-}
-#generateBtn:hover .btn-rule { width: 80%; opacity: 0.3; }
-
-.btn-label-main {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: clamp(22px, 3.5vw, 28px);
-  line-height: 1;
-  letter-spacing: 0.01em;
-  color: var(--amber);
-  position: relative; z-index: 1;
-  transition: color 280ms ease, letter-spacing 320ms ease;
-}
-#generateBtn:hover .btn-label-main {
-  color: var(--amber-bright);
-  letter-spacing: 0.04em;
-}
-
-.btn-label-sub {
-  font-family: var(--font-sans);
-  font-size: 9px;
-  font-weight: 400;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--warm-grey-2);
-  position: relative; z-index: 1;
-  transition: color 280ms ease, letter-spacing 320ms ease;
-}
-#generateBtn:hover .btn-label-sub {
-  color: var(--amber-dim);
-  letter-spacing: 0.38em;
-}
-
-.btn-frame {
-  position: absolute; inset: 0;
-  border-top: 1px solid rgba(245,166,35,0.2);
-  border-bottom: 1px solid rgba(245,166,35,0.2);
-  transition: border-color 280ms ease;
-  pointer-events: none;
-}
-#generateBtn:hover .btn-frame {
-  border-color: rgba(245,166,35,0.5);
-}
-
-#generateBtn:disabled {
-  opacity: 0.3; cursor: not-allowed;
-  pointer-events: none;
-}
-#generateBtn:focus-visible { outline: 1px solid var(--amber); outline-offset: 4px; }
- 
-/* ── Error in scene 2 ── */
-#errorBox {
-  width: 100%; max-width: 520px;
-  margin-top: 16px;
-}
- 
+#errorBox { width:100%; max-width:520px; margin-top:14px; }
 .error-box {
-  display: flex; gap: 12px; align-items: flex-start;
-  border-left: 2px solid var(--error);
-  padding: 12px 14px;
-  background: rgba(224,85,85,0.07);
-  font-size: 13px;
-  color: rgba(240,234,216,0.7);
-  line-height: 1.5;
+  display:flex; gap:10px; align-items:flex-start;
+  border-left:2px solid var(--error); padding:11px 14px;
+  background:rgba(224,85,85,0.07);
+  font-family:var(--f-body); font-size:13px; color:rgba(240,234,216,0.7); line-height:1.5;
 }
- 
-.error-box span { color: var(--error); flex-shrink: 0; margin-top: 1px; }
- 
-/* ── SCENE 3: RESULTS ────────────────────────────────────────── */
-#scene-3 {
-  padding: 72px 16px 0;
-  justify-content: flex-start;
-  align-items: stretch;
+.error-box span { color:var(--error); flex-shrink:0; }
+
+/* ── TOP BAR — scene 3 only ─────────────────────────────────── */
+#top-bar {
+  position:fixed; top:0; left:0; right:0; height:52px;
+  display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
+  padding:0 28px; border-bottom:1px solid rgba(245,166,35,0.1);
+  background:rgba(13,15,26,0.9);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  z-index:10; opacity:0; pointer-events:none; transform:translateY(-52px);
+  transition:opacity 350ms ease, transform 350ms var(--ease);
 }
- 
+#top-bar.visible { opacity:1; pointer-events:all; transform:translateY(0); }
+
+.top-logo {
+  font-family:var(--f-head); font-size:15px; font-weight:400; letter-spacing:0.04em;
+  color:var(--amber); background:none; border:none; padding:0;
+  cursor:pointer; justify-self:start;
+  transition:color 200ms ease;
+  /* no underline on click - remove ::after entirely */
+}
+.top-logo:hover { color:var(--amber-pale); }
+.top-logo:focus-visible { outline:1px solid var(--amber); outline-offset:4px; }
+
+#song-badge {
+  display:flex; align-items:center; gap:12px;
+  opacity:0; transform:translateY(-4px);
+  transition:opacity 350ms ease 100ms, transform 350ms ease 100ms;
+  justify-self:center;
+}
+#song-badge.visible { opacity:1; transform:translateY(0); }
+.badge-vr { width:1px; height:22px; background:rgba(245,166,35,0.3); flex-shrink:0; }
+.badge-text { text-align:center; line-height:1.3; }
+.badge-song   { font-family:var(--f-head); font-size:13px; font-weight:400; color:var(--warm-white); }
+.badge-artist { font-family:var(--f-body);  font-size:11px; font-weight:300; color:var(--grey); }
+
+#start-over {
+  font-family:var(--f-body); font-size:10px; font-weight:400;
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--grey-2);
+  background:none; border:none; cursor:pointer; padding:4px 0;
+  position:relative; justify-self:end; transition:color 200ms ease; display:none;
+}
+#start-over::after { content:''; position:absolute; bottom:0; left:0; right:100%; height:1px; background:var(--amber); transition:right 260ms ease; }
+#start-over:hover { color:var(--amber); }
+#start-over:hover::after { right:0; }
+#start-over:focus-visible { outline:1px solid var(--amber); outline-offset:4px; }
+
+/* ── SCENE 3 ─────────────────────────────────────────────────── */
+#scene-3 { padding:52px 0 0; justify-content:flex-start; align-items:stretch; }
 #results-inner {
-  flex: 1;
-  width: 100%;
-  max-width: 1320px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 72px);
+  flex:1; width:100%; max-width:1320px; margin:0 auto;
+  display:flex; flex-direction:column; height:calc(100vh - 52px); padding:0 16px;
 }
- 
+
 #results-meta {
-  padding: 18px 12px 14px;
-  display: flex; align-items: center; gap: 0;
-  border-bottom: 1px solid rgba(245,166,35,0.12);
-  flex-shrink: 0;
-  flex-wrap: wrap;
-  row-gap: 4px;
+  padding:12px 4px 10px;
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  border-bottom:1px solid rgba(245,166,35,0.1); flex-shrink:0;
 }
-
 .rm-title {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: clamp(18px, 2.2vw, 24px);
-  color: var(--warm-white);
-  letter-spacing: -0.01em;
-  margin-right: 16px;
+  font-family:var(--f-head); font-weight:400; font-style:italic;
+  font-size:clamp(16px,2vw,21px); color:var(--warm-white); letter-spacing:-0.01em; margin-right:4px;
 }
-
-.rm-meta {
-  display: flex; align-items: center; gap: 0;
-  flex-wrap: wrap;
-}
-
 .rm-pill {
-  font-size: 11px;
-  font-family: var(--font-sans);
-  font-weight: 400;
-  letter-spacing: 0.05em;
-  color: var(--warm-white);
-  opacity: 0.75;
-  padding: 3px 10px;
-  border: 1px solid rgba(245,166,35,0.18);
-  margin-right: 6px;
-  margin-bottom: 2px;
-  background: rgba(245,166,35,0.05);
+  font-family:var(--f-body); font-size:11px; font-weight:400; letter-spacing:0.04em;
+  color:var(--grey); padding:3px 9px;
+  border:1px solid rgba(245,166,35,0.14); background:rgba(245,166,35,0.04);
 }
 
-.rm-pill strong {
-  color: var(--amber);
-  font-weight: 400;
-  opacity: 1;
-}
- 
-#presets-grid {
-  flex: 1;
-  display: flex;
-  gap: 1px;
-  overflow: hidden;
-  background: rgba(245,166,35,0.06);
-}
- 
 /* Cards */
+#presets-grid {
+  flex:1; display:flex; gap:1px; background:rgba(245,166,35,0.05);
+  overflow:hidden; min-height:0;
+}
 .preset-card {
-  flex: 1;
-  display: flex; flex-direction: column;
-  background: var(--navy-2);
-  overflow: hidden;
-  min-width: 0;
-  transition: background 220ms ease;
+  flex:1; display:flex; flex-direction:column;
+  background:var(--navy-2); min-width:0; overflow:hidden;
 }
- 
-.preset-card:hover { background: var(--navy-3); }
- 
 .card-header {
-  padding: 18px 22px 14px;
-  border-top: 1px solid rgba(245,166,35,0.4);
-  flex-shrink: 0;
-  background: rgba(245,166,35,0.025);
+  padding:14px 18px 11px;
+  border-top:1px solid rgba(245,166,35,0.32);
+  background:rgba(245,166,35,0.025); flex-shrink:0;
 }
-
 .card-ordinal {
-  font-size: 9px; letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--warm-grey-2);
-  font-weight: 400;
-  margin-bottom: 5px;
-  font-family: var(--font-sans);
+  font-family:var(--f-body); font-size:9px; font-weight:500;
+  letter-spacing:0.3em; text-transform:uppercase; color:var(--grey-2); margin-bottom:3px;
 }
- 
 .card-name {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: clamp(16px, 1.8vw, 21px);
-  color: var(--warm-white);
-  line-height: 1.2;
-  margin-bottom: 6px;
+  font-family:var(--f-head); font-weight:400; font-style:italic;
+  font-size:clamp(14px,1.5vw,18px); color:var(--warm-white); line-height:1.2; margin-bottom:3px;
 }
- 
 .card-desc {
-  font-size: 12px; color: var(--warm-grey);
-  font-style: italic;
-  font-family: var(--font-serif);
-  line-height: 1.5;
-}
- 
-.card-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px 22px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(245,166,35,0.2) transparent;
-}
- 
-.card-body::-webkit-scrollbar { width: 3px; }
-.card-body::-webkit-scrollbar-track { background: transparent; }
-.card-body::-webkit-scrollbar-thumb { background: rgba(245,166,35,0.2); }
- 
-.settings-group {
-  margin-bottom: 18px;
-}
- 
-.sg-title {
-  font-size: 9px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--amber-dim);
-  font-weight: 500;
-  margin-bottom: 8px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid rgba(245,166,35,0.1);
-}
- 
-.setting-row {
-  display: flex; align-items: baseline;
-  padding: 5px 0;
-  gap: 4px;
-}
- 
-.sr-key {
-  font-size: 12px; color: var(--warm-grey);
-  white-space: nowrap; flex-shrink: 0;
-  font-weight: 300;
-}
- 
-.sr-dots {
-  flex: 1;
-  border-bottom: 1px dotted rgba(245,166,35,0.15);
-  margin: 0 6px 3px;
-  min-width: 16px;
-}
- 
-.sr-val {
-  font-size: 12px; color: var(--warm-white);
-  text-align: right; font-weight: 400;
-  white-space: nowrap;
+  font-family:var(--f-body); font-size:11px; font-weight:300; color:var(--grey); line-height:1.4;
 }
 
-.sr-val.highlight {
-  color: var(--warm-white);
-  font-weight: 500;
+/* card body — NO scroll */
+.card-body {
+  flex:1; padding:10px 18px 0; overflow:hidden;
+  display:flex; flex-direction:column; gap:9px;
 }
- 
-.tips-text {
-  font-size: 11px; color: var(--warm-grey);
-  line-height: 1.65;
-  font-style: italic;
-  font-family: var(--font-serif);
+.settings-group { display:flex; flex-direction:column; }
+.sg-title {
+  font-family:var(--f-body); font-size:9px; font-weight:500;
+  letter-spacing:0.26em; text-transform:uppercase; color:var(--amber-dim);
+  padding-bottom:3px; border-bottom:1px solid rgba(245,166,35,0.08); margin-bottom:3px;
 }
- 
+.setting-row { display:flex; align-items:baseline; padding:2.5px 0; gap:3px; }
+.sr-key  { font-family:var(--f-body); font-size:11px; font-weight:300; color:var(--grey); white-space:nowrap; flex-shrink:0; }
+.sr-num  { font-family:var(--f-body); font-size:10px; font-weight:300; color:var(--grey-2); margin-left:3px; white-space:nowrap; flex-shrink:0; }
+.sr-dots { flex:1; border-bottom:1px dotted rgba(245,166,35,0.12); margin:0 5px 2px; min-width:10px; }
+.sr-val  { font-family:var(--f-body); font-size:11px; font-weight:400; color:var(--warm-white); text-align:right; white-space:nowrap; }
+.tips-text { font-family:var(--f-body); font-size:11px; font-weight:300; color:var(--grey); line-height:1.5; }
+
 .card-footer {
-  padding: 14px 22px;
-  border-top: 1px solid rgba(245,166,35,0.1);
-  flex-shrink: 0;
+  padding:9px 18px 11px; border-top:1px solid rgba(245,166,35,0.08); flex-shrink:0; margin-top:auto;
 }
- 
 .btn-copy {
-  width: 100%;
-  background: transparent;
-  border: 1px solid rgba(245,166,35,0.25);
-  color: var(--warm-grey);
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 10px 16px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: border-color 200ms ease, color 200ms ease, background 200ms ease;
+  width:100%; background:transparent; border:1px solid rgba(245,166,35,0.2); color:var(--grey);
+  font-family:var(--f-body); font-size:10px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase;
+  padding:9px 14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px;
+  transition: border-color 180ms, color 180ms, background 180ms;
 }
- 
-.btn-copy:hover {
-  border-color: var(--amber);
-  color: var(--amber);
-  background: rgba(245,166,35,0.05);
-}
- 
-.btn-copy.copied {
-  border-color: var(--success);
-  color: var(--success);
-}
- 
-.btn-copy:focus-visible { outline: 1px solid var(--amber); outline-offset: 2px; }
- 
+.btn-copy:hover { border-color:var(--amber); color:var(--amber); background:rgba(245,166,35,0.04); }
+.btn-copy.copied { border-color:var(--success); color:var(--success); }
+.btn-copy:focus-visible { outline:1px solid var(--amber); outline-offset:2px; }
+
 #s3-footer {
-  text-align: center;
-  padding: 10px;
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--warm-grey-3);
-  flex-shrink: 0;
+  text-align:center; padding:6px;
+  font-family:var(--f-body); font-size:9px; letter-spacing:0.16em; text-transform:uppercase;
+  color:var(--grey-3); flex-shrink:0;
 }
- 
-/* ── LOADING OVERLAY ─────────────────────────────────────────── */
+
+/* ── LOADING ─────────────────────────────────────────────────── */
 #loading-overlay {
-  position: fixed; inset: 0; z-index: 50;
-  background: rgba(13,15,26,0.92);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: none;
-  align-items: center; justify-content: center;
-  flex-direction: column; gap: 24px;
+  position:fixed; inset:0; z-index:50;
+  background:rgba(13,15,26,0.92); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  display:none; align-items:center; justify-content:center; flex-direction:column; gap:22px;
 }
- 
-#loading-overlay.active {
-  display: flex;
-}
- 
-.loader-ring {
-  width: 56px; height: 56px;
-  position: relative;
-}
- 
-.loader-ring svg {
-  animation: ringRotate 1.6s linear infinite;
-  width: 100%; height: 100%;
-}
- 
-@keyframes ringRotate {
-  to { transform: rotate(360deg); }
-}
- 
+#loading-overlay.active { display:flex; }
+.loader-ring { width:52px; height:52px; }
+.loader-ring svg { animation:spin 1.6s linear infinite; width:100%; height:100%; }
+@keyframes spin { to{transform:rotate(360deg)} }
 .loading-text {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 14px;
-  color: var(--warm-grey);
-  letter-spacing: 0.08em;
-  animation: textFade 2s ease-in-out infinite;
+  font-family:var(--f-head); font-style:italic; font-size:14px; color:var(--grey); letter-spacing:0.08em;
+  animation:tFade 2s ease-in-out infinite;
 }
- 
-@keyframes textFade {
-  0%, 100% { opacity: 0.4; }
-  50%       { opacity: 1; }
+@keyframes tFade { 0%,100%{opacity:0.35} 50%{opacity:1} }
+
+/* ── MOBILE ──────────────────────────────────────────────────── */
+@media (max-width:768px) {
+  #presets-grid { flex-direction:row; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; background:transparent; gap:0; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  #presets-grid::-webkit-scrollbar { display:none; }
+  .preset-card { min-width:100%; scroll-snap-align:start; }
+  #carousel-dots { display:flex; justify-content:center; gap:6px; padding:8px; flex-shrink:0; }
+  .carousel-dot { width:18px; height:2px; background:rgba(245,166,35,0.2); transition:background 200ms,width 200ms; }
+  .carousel-dot.active { background:var(--amber); width:28px; }
 }
- 
-/* ── MOBILE CAROUSEL ─────────────────────────────────────────── */
-@media (max-width: 768px) {
-  #presets-grid {
-    flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    background: transparent;
-    gap: 0;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
- 
-  #presets-grid::-webkit-scrollbar { display: none; }
- 
-  .preset-card {
-    min-width: 100%;
-    scroll-snap-align: start;
-    border-right: 1px solid rgba(245,166,35,0.08);
-  }
- 
-  #carousel-dots {
-    display: flex;
-    justify-content: center; gap: 6px;
-    padding: 10px;
-    flex-shrink: 0;
-  }
- 
-  .carousel-dot {
-    width: 20px; height: 2px;
-    background: rgba(245,166,35,0.2);
-    transition: background 220ms ease, width 220ms ease;
-  }
- 
-  .carousel-dot.active {
-    background: var(--amber);
-    width: 32px;
-  }
-}
- 
-#carousel-dots { display: none; }
- 
-@media (min-width: 769px) {
-  #carousel-dots { display: none !important; }
-}
- 
-/* ── UTILITIES ────────────────────────────────────────────────── */
-* { scrollbar-width: thin; scrollbar-color: rgba(245,166,35,0.15) transparent; }
-*::-webkit-scrollbar { width: 4px; }
-*::-webkit-scrollbar-track { background: transparent; }
-*::-webkit-scrollbar-thumb { background: rgba(245,166,35,0.15); }
- 
-button { cursor: pointer; }
- 
-*:focus-visible { outline: 1px solid var(--amber); outline-offset: 3px; }
- 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
- 
+#carousel-dots { display:none; }
+@media (min-width:769px) { #carousel-dots { display:none !important; } }
+
+button { cursor:pointer; }
+*:focus-visible { outline:1px solid var(--amber); outline-offset:3px; }
 </style>
 </head>
 <body>
- 
-<!-- Background -->
+
 <div id="bg" aria-hidden="true">
-  <div id="bg-base"></div>
-  <div id="bg-grid"></div>
-  <div id="bg-vignette"></div>
-  <div id="bg-noise"></div>
+  <div id="bg-base"></div><div id="bg-grid"></div><div id="bg-vignette"></div><div id="bg-noise"></div>
 </div>
- 
-<!-- Top Bar -->
+
+<!-- Top bar — scene 3 only, no song badge in scene 2 -->
 <div id="top-bar" role="banner">
   <button class="top-logo" id="logo-home" aria-label="Return to home">KeyMatch</button>
   <div id="song-badge" aria-live="polite">
-    <div class="badge-bar"></div>
+    <div class="badge-vr"></div>
     <div class="badge-text">
-      <div class="badge-title" id="badge-title"></div>
+      <div class="badge-song"   id="badge-title"></div>
       <div class="badge-artist" id="badge-artist"></div>
     </div>
-    <div class="badge-bar-r"></div>
+    <div class="badge-vr"></div>
   </div>
-  <button id="start-over" aria-label="Start over from the beginning">Start Over</button>
+  <button id="start-over" aria-label="Start over">Start Over</button>
 </div>
- 
-<!-- Stage -->
+
 <div id="stage">
- 
-  <!-- Scene 1: Song Search -->
+
+  <!-- Scene 1: Search -->
   <section id="scene-1" class="scene active" aria-label="Search for a song">
-    <div class="s1-logomark">
-      <span class="s1-keymatch">KeyMatch</span>
-      <span class="s1-tagline">Find the perfect settings for your keyboard</span>
+    <div class="brand-block">
+      <span class="brand-name">KeyMatch</span>
+      <span class="brand-tagline">Find the perfect settings for your keyboard</span>
     </div>
- 
-    <div class="s1-search-wrap">
-      <label for="songSearch" class="s1-label">Song Title or Artist</label>
-      <div class="search-field-wrap">
-        <input
-          id="songSearch"
-          type="text"
-          autocomplete="off"
-          spellcheck="false"
+    <div class="field-wrap">
+      <label for="songSearch" class="field-label">Song Title or Artist</label>
+      <div style="position:relative">
+        <input id="songSearch" class="text-input" type="text" autocomplete="off" spellcheck="false"
           placeholder="e.g. Clair de Lune, Bohemian Rhapsody…"
-          aria-label="Search for a song"
-          aria-autocomplete="list"
-          aria-controls="searchDropdown"
-          aria-expanded="false"
-        >
-        <svg class="search-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          aria-label="Search for a song" aria-autocomplete="list" aria-controls="searchDropdown" aria-expanded="false">
+        <svg class="field-icon" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 111 11a6 6 0 0116 0z"/>
         </svg>
         <div id="searchDropdown" role="listbox" aria-label="Search results"></div>
       </div>
     </div>
   </section>
- 
-  <!-- Scene 2: Keyboard Input -->
+
+  <!-- Scene 2: Keyboard — brand block stays, song badge removed, NO top bar -->
   <section id="scene-2" class="scene" aria-label="Enter your keyboard model">
-    <div class="s2-center">
-      <label for="kbInput" class="s2-step-label">Your Keyboard Model</label>
-      <input
-        id="kbInput"
-        type="text"
-        autocomplete="off"
-        spellcheck="false"
-        placeholder="e.g. Yamaha PSR-E373, Casio CT-X700…"
-        aria-label="Keyboard model"
-      >
- 
+    <div class="brand-block">
+      <span class="brand-name">KeyMatch</span>
+      <span class="brand-tagline">Find the perfect settings for your keyboard</span>
+    </div>
+    <div class="s2-wrap">
+      <label for="kbInput" class="field-label">Your Keyboard Model</label>
+      <input id="kbInput" class="text-input" type="text" autocomplete="off" spellcheck="false"
+        placeholder="e.g. Yamaha PSR-E373, Casio CT-X700…" aria-label="Keyboard model"
+        style="padding-right:16px">
+
       <span class="chips-label">Quick Select</span>
       <div class="chips-wrap" role="group" aria-label="Common keyboard models">
         <button class="chip" data-model="Yamaha PSR-E373">Yamaha PSR-E373</button>
@@ -993,523 +413,390 @@ button { cursor: pointer; }
         <button class="chip" data-model="Casio PX-S3100">Casio PX-S3100</button>
         <button class="chip" data-model="Roland FP-30X">Roland FP-30X</button>
       </div>
- 
+
       <button id="generateBtn" aria-label="Generate keyboard settings">
-        <div class="btn-frame" aria-hidden="true"></div>
-        <div class="btn-inner">
-          <span class="btn-label-main">Find My Settings</span>
-          <div class="btn-rule" aria-hidden="true"></div>
-          <span class="btn-label-sub">Generate Presets</span>
-        </div>
+        <span>Find My Settings</span>
       </button>
     </div>
- 
     <div id="errorBox" aria-live="polite"></div>
   </section>
- 
+
   <!-- Scene 3: Results -->
   <section id="scene-3" class="scene" aria-label="Preset results">
     <div id="results-inner">
       <div id="results-meta">
-        <div class="rm-title" id="rm-title">Your Settings</div>
-        <div class="rm-meta" id="rm-meta"></div>
+        <div class="rm-title" id="rm-title"></div>
+        <div id="rm-pills" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"></div>
       </div>
       <div id="presets-grid" role="list" aria-label="Keyboard presets"></div>
       <div id="carousel-dots" aria-hidden="true"></div>
       <div id="s3-footer">KeyMatch &mdash; Piano Settings Finder</div>
     </div>
   </section>
- 
+
 </div>
- 
-<!-- Loading Overlay -->
+
+<!-- Loading -->
 <div id="loading-overlay" role="status" aria-label="Generating settings">
   <div class="loader-ring">
-    <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="28" cy="28" r="22" stroke="rgba(245,166,35,0.1)" stroke-width="1.5"/>
-      <path d="M28 6 A22 22 0 0 1 50 28" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"/>
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="26" cy="26" r="20" stroke="rgba(245,166,35,0.1)" stroke-width="1.5"/>
+      <path d="M26 6 A20 20 0 0 1 46 26" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"/>
     </svg>
   </div>
   <div class="loading-text" id="loading-text">Analysing song…</div>
 </div>
- 
+
 <script>
 'use strict';
- 
+
 const WORKER_URL = 'https://keymatch-api.shaurya-chopra.workers.dev/api/gemini';
- 
-let selectedSong = null;
-let currentScene = 1;
-let searchTimer = null;
- 
-const loadingMessages = [
-  'Analysing song…',
-  'Consulting the instrument…',
-  'Composing your presets…',
-  'Almost there…'
-];
-let loadingMsgIdx = 0;
-let loadingInterval = null;
- 
-// ── Scene Management ──────────────────────────────────────────
+
+let selectedSong  = null;
+let currentScene  = 1;
+let searchTimer   = null;
+let loadingInterval = null, loadingMsgIdx = 0;
+const loadingMsgs = ['Analysing song…','Consulting the instrument…','Composing your presets…','Almost there…'];
+
+// ── Scenes ────────────────────────────────────────────────────
 function goToScene(n) {
   if (n === currentScene) return;
   const prev = document.getElementById(`scene-${currentScene}`);
   const next = document.getElementById(`scene-${n}`);
-  const topBar = document.getElementById('top-bar');
-  const startOver = document.getElementById('start-over');
- 
-  // Exit current
   prev.classList.remove('active');
   prev.classList.add('exiting');
-  prev.addEventListener('animationend', () => {
-    prev.classList.remove('exiting');
-    prev.style.display = '';
-  }, { once: true });
- 
-  // Enter next
-  next.style.display = '';
+  prev.addEventListener('animationend', () => prev.classList.remove('exiting'), { once: true });
   next.classList.add('entering');
-  next.addEventListener('animationend', () => {
-    next.classList.remove('entering');
-    next.classList.add('active');
-  }, { once: true });
- 
+  next.addEventListener('animationend', () => { next.classList.remove('entering'); next.classList.add('active'); }, { once: true });
   currentScene = n;
- 
-  // Top bar
-  if (n > 1) {
-    topBar.classList.add('visible');
-  } else {
-    topBar.classList.remove('visible');
-  }
- 
-  // Start over button only in scene 3
-  startOver.style.display = (n === 3) ? '' : 'none';
+  // top bar + start-over only in scene 3
+  document.getElementById('top-bar').classList.toggle('visible', n === 3);
+  document.getElementById('start-over').style.display = (n === 3) ? '' : 'none';
 }
- 
-// ── Gemini / Worker ───────────────────────────────────────────
+
+function resetToScene1() {
+  selectedSong = null;
+  document.getElementById('songSearch').value  = '';
+  document.getElementById('kbInput').value     = '';
+  document.getElementById('badge-title').textContent  = '';
+  document.getElementById('badge-artist').textContent = '';
+  document.getElementById('song-badge').classList.remove('visible');
+  clearError();
+  document.getElementById('presets-grid').innerHTML = '';
+  goToScene(1);
+  setTimeout(() => document.getElementById('songSearch').focus(), 450);
+}
+
+// ── API ───────────────────────────────────────────────────────
 async function callGemini(prompt, system) {
   const res = await fetch(WORKER_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt, system })
   });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`API error ${res.status}: ${text.slice(0, 120)}`);
-  }
-  const data = await res.json();
-  return data.response || data.text || data.content || JSON.stringify(data);
+  if (!res.ok) { const t = await res.text(); throw new Error(`API error ${res.status}: ${t.slice(0,120)}`); }
+  const d = await res.json();
+  return d.response || d.text || d.content || JSON.stringify(d);
 }
- 
-// ── Song Search ───────────────────────────────────────────────
-async function searchSongs(query) {
-  if (!query || query.length < 2) { closeDropdown(); return; }
-  const system = `You are a music database. Return ONLY a raw JSON array of songs matching the query. No markdown. No explanation. Format:
-[{"title":"...", "artist":"...", "year":2020, "genre":"Pop"}]
-Return 5-7 results maximum. Only real songs.`;
-  const prompt = `Find songs matching: "${query}"`;
+
+// ── Song search ───────────────────────────────────────────────
+async function searchSongs(q) {
+  if (!q || q.length < 2) { closeDropdown(); return; }
+  const sys = `Music database. Return ONLY raw JSON array, no markdown: [{"title":"...","artist":"...","year":2020,"genre":"Pop"}] Max 6 real songs.`;
   try {
-    const raw = await callGemini(prompt, system);
-    const start = raw.indexOf('[');
-    const end = raw.lastIndexOf(']');
-    if (start === -1) return;
-    const songs = JSON.parse(raw.slice(start, end + 1));
-    renderDropdown(songs);
-  } catch (e) { closeDropdown(); }
+    const raw = await callGemini(`Songs matching: "${q}"`, sys);
+    const s = raw.indexOf('['), e = raw.lastIndexOf(']');
+    if (s === -1) return;
+    renderDropdown(JSON.parse(raw.slice(s, e+1)));
+  } catch { closeDropdown(); }
 }
- 
+
 function renderDropdown(songs) {
   const dd = document.getElementById('searchDropdown');
-  const input = document.getElementById('songSearch');
-  if (!songs || songs.length === 0) {
+  const inp = document.getElementById('songSearch');
+  if (!songs?.length) {
     dd.innerHTML = `<div class="dd-empty">No results found</div>`;
-    dd.classList.add('open');
-    input.setAttribute('aria-expanded', 'true');
-    return;
-  }
-  dd.innerHTML = songs.map((s, i) => `
-    <div class="dd-item" role="option" tabindex="0"
-      style="animation-delay: ${i * 35}ms"
-      data-title="${escHtml(s.title)}"
-      data-artist="${escHtml(s.artist)}"
-      data-year="${s.year || ''}"
-      data-genre="${escHtml(s.genre || '')}">
-      <div class="dd-item-title">${escHtml(s.title)}</div>
-      <div class="dd-item-sub">${escHtml(s.artist)}${s.year ? ' · ' + s.year : ''}</div>
-    </div>`).join('');
-  dd.classList.add('open');
-  input.setAttribute('aria-expanded', 'true');
- 
-  dd.querySelectorAll('.dd-item').forEach(item => {
-    item.addEventListener('click', () => selectSong(item));
-    item.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectSong(item); }
+  } else {
+    dd.innerHTML = songs.map((s,i) => `
+      <div class="dd-item" role="option" tabindex="0" style="animation-delay:${i*32}ms"
+        data-title="${escHtml(s.title)}" data-artist="${escHtml(s.artist)}"
+        data-year="${s.year||''}" data-genre="${escHtml(s.genre||'')}">
+        <div class="dd-title">${escHtml(s.title)}</div>
+        <div class="dd-sub">${escHtml(s.artist)}${s.year?' · '+s.year:''}</div>
+      </div>`).join('');
+    dd.querySelectorAll('.dd-item').forEach(el => {
+      el.addEventListener('click', () => selectSong(el));
+      el.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();selectSong(el);} });
     });
-  });
+  }
+  dd.classList.add('open');
+  inp.setAttribute('aria-expanded','true');
 }
- 
-function selectSong(item) {
-  selectedSong = {
-    title: item.dataset.title,
-    artist: item.dataset.artist,
-    year: item.dataset.year,
-    genre: item.dataset.genre
-  };
+
+function selectSong(el) {
+  selectedSong = { title:el.dataset.title, artist:el.dataset.artist, year:el.dataset.year, genre:el.dataset.genre };
   document.getElementById('songSearch').value = `${selectedSong.title} — ${selectedSong.artist}`;
   closeDropdown();
-  // Update badge
-  document.getElementById('badge-title').textContent = selectedSong.title;
+  // badge is for scene 3 top bar only
+  document.getElementById('badge-title').textContent  = selectedSong.title;
   document.getElementById('badge-artist').textContent = selectedSong.artist;
   document.getElementById('song-badge').classList.add('visible');
-  // Advance
   goToScene(2);
   setTimeout(() => document.getElementById('kbInput').focus(), 450);
 }
- 
+
 function closeDropdown() {
-  const dd = document.getElementById('searchDropdown');
-  dd.classList.remove('open');
-  document.getElementById('songSearch').setAttribute('aria-expanded', 'false');
+  document.getElementById('searchDropdown').classList.remove('open');
+  document.getElementById('songSearch').setAttribute('aria-expanded','false');
 }
- 
-// ── Generate Settings ─────────────────────────────────────────
+
+// ── Generate ──────────────────────────────────────────────────
 async function generateSettings() {
   const kb = document.getElementById('kbInput').value.trim();
   if (!selectedSong) { showError('Please search and select a song first.'); return; }
-  if (!kb) { showError('Please enter your keyboard model.'); return; }
+  if (!kb)           { showError('Please enter your keyboard model.'); return; }
   clearError(); setLoading(true);
- 
-  const system = `You are a world-class keyboard technician and music producer with deep knowledge of all major keyboard brands: Yamaha PSR/DGX series, Casio CT-X/WK/PX series, Roland E-X/FA series, Korg EK/Pa series, and more.
- 
-Analyze the song's genre, mood, tempo, key, and instrumentation. Then generate keyboard settings that make it sound as close to the original as possible on the specific model given.
- 
-Return ONLY a raw JSON object — absolutely no markdown, no backticks, no explanation before or after. Just the JSON.
- 
-Required structure:
+
+  const system = `You are a world-class keyboard technician with expert knowledge of Yamaha PSR/DGX, Casio CT-X/WK/PX, Roland E-X/FA, Korg EK/Pa and all major keyboard brands.
+
+Generate keyboard settings to make the given song sound as close to its original as possible on the specific model.
+
+CRITICAL: Voice numbers and rhythm style numbers MUST be the actual numbers from the official manual of the exact keyboard model specified. Look up the manual if needed. Do not invent or guess numbers.
+
+Return ONLY raw JSON. No markdown. No backticks. No explanation.
+
 {
-  "song_analysis": {
-    "title": string,
-    "artist": string,
-    "genre": string,
-    "tempo_bpm": number,
-    "key": string,
-    "mood": string,
-    "instrumentation_notes": string
-  },
-  "keyboard_model": string,
-  "presets": [
-    {
-      "name": string,
-      "style": string,
-      "description": string,
-      "voice": {
-        "main_voice": string,
-        "main_voice_number": string,
-        "octave": string,
-        "transpose": string
-      },
-      "dual": {
-        "enabled": boolean,
-        "voice": string,
-        "voice_number": string,
-        "volume": number
-      },
-      "effects": {
-        "reverb_type": string,
-        "reverb_depth": number,
-        "chorus_type": string,
-        "chorus_depth": number
-      },
-      "eq": {
-        "bass": string,
-        "mid": string,
-        "treble": string
-      },
-      "rhythm": {
-        "style": string,
-        "style_number": string,
-        "tempo": number,
-        "intro": string,
-        "fill": string
-      },
-      "extra_tips": string
-    }
-  ]
+  "song_analysis":{"title":string,"artist":string,"genre":string,"tempo_bpm":number,"key":string,"mood":string},
+  "keyboard_model":string,
+  "presets":[{
+    "name":string,"style":string,"description":string,
+    "voice":{"main_voice":string,"voice_number":string,"octave":string,"transpose":string},
+    "dual":{"enabled":boolean,"voice":string,"voice_number":string,"volume":number},
+    "effects":{"reverb_type":string,"reverb_depth":number,"chorus_type":string,"chorus_depth":number},
+    "rhythm":{"style":string,"style_number":string,"tempo":number,"intro":string,"fill":string},
+    "extra_tips":string
+  }]
 }
- 
-Provide exactly 3 presets with different creative approaches (e.g. Classic, Modern, Cinematic). Use real voice and rhythm names that actually exist on the specified keyboard model.`;
- 
-  const prompt = `Song: "${selectedSong.title}" by ${selectedSong.artist} (${selectedSong.year}, ${selectedSong.genre || 'Pop'})
-Keyboard model: ${kb}
- 
-Analyze this song deeply and produce 3 complete preset configurations for the ${kb}. Use voice names and rhythm style names that genuinely exist on this keyboard model.`;
- 
+
+Provide exactly 3 presets with different approaches. Voice and rhythm numbers must be accurate for the exact model.`;
+
+  const prompt = `Song: "${selectedSong.title}" by ${selectedSong.artist} (${selectedSong.year}, ${selectedSong.genre||'Pop'})
+Keyboard: ${kb}
+Generate 3 complete presets with voice and rhythm numbers accurate for the ${kb}.`;
+
   try {
     const raw = await callGemini(prompt, system);
-    let data;
-    try {
-      const start = raw.indexOf('{');
-      const end = raw.lastIndexOf('}');
-      if (start === -1 || end === -1) throw new Error('no json found');
-      data = JSON.parse(raw.slice(start, end + 1));
-    } catch (e) {
-      console.error('Raw response:', raw);
-      throw new Error('Could not parse response. Please try again.');
-    }
-    renderResults(data);
-  } catch (err) {
+    const s = raw.indexOf('{'), e = raw.lastIndexOf('}');
+    if (s===-1||e===-1) throw new Error('Could not parse response. Please try again.');
+    renderResults(JSON.parse(raw.slice(s,e+1)));
+  } catch(err) {
     showError(err.message);
   } finally {
     setLoading(false);
   }
 }
- 
-// ── Render Results ────────────────────────────────────────────
+
+// ── Render results ────────────────────────────────────────────
 function renderResults(data) {
   const song = data.song_analysis || {};
   const presets = data.presets || [];
-  const ordinals = ['I', 'II', 'III'];
- 
-  // Meta
-  document.getElementById('rm-title').textContent = escHtml(song.title || selectedSong.title) + '';
-  const metaEl = document.getElementById('rm-meta');
-  const pills = [
-    song.mood ? `<span class="rm-pill"><strong>${escHtml(song.mood)}</strong></span>` : '',
-    song.tempo_bpm ? `<span class="rm-pill"><strong>${song.tempo_bpm}</strong> BPM</span>` : '',
-    song.key ? `<span class="rm-pill">Key of <strong>${escHtml(song.key)}</strong></span>` : '',
-    song.genre ? `<span class="rm-pill">${escHtml(song.genre)}</span>` : '',
+  const roms = ['I','II','III'];
+
+  document.getElementById('rm-title').textContent = song.title || selectedSong.title;
+  document.getElementById('rm-pills').innerHTML = [
+    song.mood      ? `<span class="rm-pill">${escHtml(song.mood)}</span>` : '',
+    song.tempo_bpm ? `<span class="rm-pill">${song.tempo_bpm} BPM</span>` : '',
+    song.key       ? `<span class="rm-pill">Key of ${escHtml(song.key)}</span>` : '',
+    song.genre     ? `<span class="rm-pill">${escHtml(song.genre)}</span>` : '',
   ].filter(Boolean).join('');
-  metaEl.innerHTML = pills;
- 
-  // Cards
-  const grid = document.getElementById('presets-grid');
-  grid.innerHTML = presets.map((p, i) => `
-    <div class="preset-card" role="listitem">
-      <div class="card-header">
-        <div class="card-ordinal">Preset ${ordinals[i] || (i + 1)}</div>
-        <div class="card-name">${escHtml(p.name || '')}</div>
-        <div class="card-desc">${escHtml(p.description || p.style || '')}</div>
-      </div>
-      <div class="card-body">
-        <div class="settings-group">
-          <div class="sg-title">Voice</div>
-          <div class="settings-rows">
-            ${row('Main Voice', p.voice?.main_voice)}
-            ${row('Octave', p.voice?.octave)}
-            ${row('Transpose', p.voice?.transpose)}
-          </div>
-        </div>
-        <div class="settings-group">
-          <div class="sg-title">Dual Voice</div>
-          <div class="settings-rows">
-            ${row('Status', p.dual?.enabled ? 'On' : 'Off')}
-            ${p.dual?.enabled ? row('Voice', p.dual?.voice) : ''}
-            ${p.dual?.enabled ? row('Volume', p.dual?.volume ?? '—') : ''}
-          </div>
-        </div>
-        <div class="settings-group">
-          <div class="sg-title">Effects</div>
-          <div class="settings-rows">
-            ${row('Reverb Type', p.effects?.reverb_type)}
-            ${row('Reverb Depth', p.effects?.reverb_depth)}
-            ${row('Chorus Type', p.effects?.chorus_type)}
-            ${row('Chorus Depth', p.effects?.chorus_depth)}
-          </div>
-        </div>
-        <div class="settings-group">
-          <div class="sg-title">EQ</div>
-          <div class="settings-rows">
-            ${row('Bass', p.eq?.bass)}
-            ${row('Mid', p.eq?.mid)}
-            ${row('Treble', p.eq?.treble)}
-          </div>
-        </div>
-        <div class="settings-group">
-          <div class="sg-title">Rhythm / Tempo</div>
-          <div class="settings-rows">
-            ${row('Rhythm Style', p.rhythm?.style)}
-            ${row('Tempo', p.rhythm?.tempo ? p.rhythm.tempo + ' BPM' : '—')}
-            ${row('Intro', p.rhythm?.intro)}
-            ${row('Fill-in', p.rhythm?.fill)}
-          </div>
-        </div>
-        ${p.extra_tips ? `<div class="settings-group"><div class="sg-title">Pro Tips</div><div class="tips-text">${escHtml(p.extra_tips)}</div></div>` : ''}
-      </div>
-      <div class="card-footer">
-        <button class="btn-copy" data-idx="${i}" aria-label="Copy preset ${ordinals[i] || (i+1)} settings">
-          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-          </svg>
-          Copy Settings
-        </button>
-      </div>
-    </div>`).join('');
- 
-  // Copy buttons
-  grid.querySelectorAll('.btn-copy').forEach(btn => {
-    btn.addEventListener('click', () => copyCard(btn, parseInt(btn.dataset.idx)));
-  });
- 
-  // Carousel dots (mobile)
+
+  document.getElementById('presets-grid').innerHTML = presets.map((p,i) => buildCard(p,i,roms)).join('');
+
+  document.querySelectorAll('.btn-copy').forEach(btn =>
+    btn.addEventListener('click', () => copyCard(btn, parseInt(btn.dataset.idx)))
+  );
+
   const dotsEl = document.getElementById('carousel-dots');
-  dotsEl.innerHTML = presets.map((_, i) => `<div class="carousel-dot${i===0?' active':''}"></div>`).join('');
+  dotsEl.innerHTML = presets.map((_,i) => `<div class="carousel-dot${i===0?' active':''}"></div>`).join('');
   if (window.innerWidth <= 768) {
+    const grid = document.getElementById('presets-grid');
     grid.addEventListener('scroll', () => {
-      const idx = Math.round(grid.scrollLeft / grid.offsetWidth);
-      dotsEl.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
-    }, { passive: true });
+      const idx = Math.round(grid.scrollLeft/grid.offsetWidth);
+      dotsEl.querySelectorAll('.carousel-dot').forEach((d,i) => d.classList.toggle('active',i===idx));
+    }, { passive:true });
   }
- 
+
   goToScene(3);
 }
- 
-function row(label, value, highlight = false) {
+
+function buildCard(p, i, roms) {
+  // voice row: name inline with #number
+  const vn = p.voice?.voice_number ? ` <span class="sr-num">#${escHtml(String(p.voice.voice_number))}</span>` : '';
+  // dual voice
+  const dn = (p.dual?.enabled && p.dual?.voice_number) ? ` <span class="sr-num">#${escHtml(String(p.dual.voice_number))}</span>` : '';
+  // rhythm
+  const rn = p.rhythm?.style_number ? ` <span class="sr-num">#${escHtml(String(p.rhythm.style_number))}</span>` : '';
+
+  return `
+  <div class="preset-card" role="listitem">
+    <div class="card-header">
+      <div class="card-ordinal">Preset ${roms[i]||i+1}</div>
+      <div class="card-name">${escHtml(p.name||'')}</div>
+      <div class="card-desc">${escHtml(p.description||p.style||'')}</div>
+    </div>
+    <div class="card-body">
+
+      <div class="settings-group">
+        <div class="sg-title">Voice</div>
+        <div class="setting-row">
+          <span class="sr-key">Main Voice</span>${vn}
+          <span class="sr-dots" aria-hidden="true"></span>
+          <span class="sr-val">${escHtml(p.voice?.main_voice||'—')}</span>
+        </div>
+        ${p.voice?.octave    ? rowS('Octave',    p.voice.octave)    : ''}
+        ${p.voice?.transpose ? rowS('Transpose', p.voice.transpose) : ''}
+      </div>
+
+      ${p.dual?.enabled ? `
+      <div class="settings-group">
+        <div class="sg-title">Dual Voice</div>
+        <div class="setting-row">
+          <span class="sr-key">Voice</span>${dn}
+          <span class="sr-dots" aria-hidden="true"></span>
+          <span class="sr-val">${escHtml(p.dual?.voice||'—')}</span>
+        </div>
+        ${rowS('Volume', p.dual?.volume ?? '—')}
+      </div>` : ''}
+
+      <div class="settings-group">
+        <div class="sg-title">Rhythm &amp; Tempo</div>
+        <div class="setting-row">
+          <span class="sr-key">Style</span>${rn}
+          <span class="sr-dots" aria-hidden="true"></span>
+          <span class="sr-val">${escHtml(p.rhythm?.style||'—')}</span>
+        </div>
+        ${rowS('Tempo',   p.rhythm?.tempo ? p.rhythm.tempo+' BPM' : '—')}
+        ${rowS('Intro',   p.rhythm?.intro)}
+        ${rowS('Fill-in', p.rhythm?.fill)}
+      </div>
+
+      <div class="settings-group">
+        <div class="sg-title">Effects</div>
+        ${rowS('Reverb', p.effects?.reverb_type
+            ? p.effects.reverb_type + (p.effects.reverb_depth !== undefined ? ' · '+p.effects.reverb_depth : '')
+            : '—')}
+        ${rowS('Chorus', p.effects?.chorus_type
+            ? p.effects.chorus_type + (p.effects.chorus_depth !== undefined ? ' · '+p.effects.chorus_depth : '')
+            : '—')}
+      </div>
+
+      ${p.extra_tips ? `
+      <div class="settings-group">
+        <div class="sg-title">Tips</div>
+        <div class="tips-text">${escHtml(p.extra_tips)}</div>
+      </div>` : ''}
+
+    </div>
+    <div class="card-footer">
+      <button class="btn-copy" data-idx="${i}" aria-label="Copy preset ${roms[i]||i+1}">
+        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+        </svg>
+        Copy Settings
+      </button>
+    </div>
+  </div>`;
+}
+
+function rowS(label, value) {
   const v = (value !== undefined && value !== null && value !== '') ? value : '—';
   return `<div class="setting-row">
     <span class="sr-key">${escHtml(label)}</span>
     <span class="sr-dots" aria-hidden="true"></span>
-    <span class="sr-val${highlight ? ' highlight' : ''}">${escHtml(String(v))}</span>
+    <span class="sr-val">${escHtml(String(v))}</span>
   </div>`;
 }
- 
+
 function copyCard(btn, idx) {
   const cards = document.querySelectorAll('.preset-card');
   if (!cards[idx]) return;
-  let text = `KeyMatch — ${selectedSong?.title} (${selectedSong?.artist})\nPreset ${idx+1}\n${'─'.repeat(40)}\n`;
-  cards[idx].querySelectorAll('.settings-group').forEach(group => {
-    text += `\n[${group.querySelector('.sg-title')?.textContent || ''}]\n`;
-    group.querySelectorAll('.setting-row').forEach(r => {
-      text += `  ${r.querySelector('.sr-key')?.textContent?.trim()}: ${r.querySelector('.sr-val')?.textContent?.trim()}\n`;
+  let text = `KeyMatch — ${selectedSong?.title} (${selectedSong?.artist})\nPreset ${idx+1}\n${'─'.repeat(36)}\n`;
+  cards[idx].querySelectorAll('.settings-group').forEach(g => {
+    text += `\n[${g.querySelector('.sg-title')?.textContent||''}]\n`;
+    g.querySelectorAll('.setting-row').forEach(r => {
+      const k   = r.querySelector('.sr-key')?.textContent?.trim();
+      const num = r.querySelector('.sr-num')?.textContent?.trim();
+      const v   = r.querySelector('.sr-val')?.textContent?.trim();
+      text += `  ${k}${num?' ('+num+')':''}: ${v}\n`;
     });
-    const tips = group.querySelector('.tips-text');
+    const tips = g.querySelector('.tips-text');
     if (tips) text += `  ${tips.textContent.trim()}\n`;
   });
   navigator.clipboard.writeText(text).then(() => {
     btn.classList.add('copied');
-    btn.innerHTML = `Copied ✓`;
+    btn.textContent = 'Copied ✓';
     setTimeout(() => {
       btn.classList.remove('copied');
-      btn.innerHTML = `<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy Settings`;
+      btn.innerHTML = `<svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy Settings`;
     }, 2500);
   });
 }
- 
-// ── Loading ───────────────────────────────────────────────────
-function setLoading(on) {
-  const overlay = document.getElementById('loading-overlay');
-  const btn = document.getElementById('generateBtn');
-  if (on) {
-    overlay.classList.add('active');
-    btn.disabled = true;
-    loadingMsgIdx = 0;
-    document.getElementById('loading-text').textContent = loadingMessages[0];
-    loadingInterval = setInterval(() => {
-      loadingMsgIdx = (loadingMsgIdx + 1) % loadingMessages.length;
-      document.getElementById('loading-text').textContent = loadingMessages[loadingMsgIdx];
-    }, 2200);
-  } else {
-    overlay.classList.remove('active');
-    btn.disabled = false;
-    clearInterval(loadingInterval);
-  }
-}
- 
-function showError(msg) {
-  const box = document.getElementById('errorBox');
-  box.innerHTML = `<div class="error-box"><span>⚠</span><div>${escHtml(msg)}</div></div>`;
-  box.style.display = 'block';
-}
- 
-function clearError() {
-  const box = document.getElementById('errorBox');
-  box.style.display = 'none';
-  box.innerHTML = '';
-}
- 
-function escHtml(str) {
-  return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
- 
-// ── Event Listeners ───────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  const songInput = document.getElementById('songSearch');
-  const generateBtn = document.getElementById('generateBtn');
-  const startOver = document.getElementById('start-over');
 
-  // Logo click → back to scene 1
-  document.getElementById('logo-home').addEventListener('click', () => {
-    selectedSong = null;
-    document.getElementById('songSearch').value = '';
-    document.getElementById('kbInput').value = '';
-    document.getElementById('badge-title').textContent = '';
-    document.getElementById('badge-artist').textContent = '';
-    document.getElementById('song-badge').classList.remove('visible');
-    clearError();
-    document.getElementById('presets-grid').innerHTML = '';
-    goToScene(1);
-    setTimeout(() => document.getElementById('songSearch').focus(), 450);
-  });
- 
-  // Search with debounce
-  songInput.addEventListener('input', () => {
+function setLoading(on) {
+  document.getElementById('loading-overlay').classList.toggle('active', on);
+  document.getElementById('generateBtn').disabled = on;
+  if (on) {
+    loadingMsgIdx = 0;
+    document.getElementById('loading-text').textContent = loadingMsgs[0];
+    loadingInterval = setInterval(() => {
+      loadingMsgIdx = (loadingMsgIdx+1) % loadingMsgs.length;
+      document.getElementById('loading-text').textContent = loadingMsgs[loadingMsgIdx];
+    }, 2200);
+  } else { clearInterval(loadingInterval); }
+}
+function showError(msg) {
+  const b = document.getElementById('errorBox');
+  b.innerHTML = `<div class="error-box"><span>⚠</span><div>${escHtml(msg)}</div></div>`;
+  b.style.display = 'block';
+}
+function clearError() { const b=document.getElementById('errorBox'); b.style.display='none'; b.innerHTML=''; }
+function escHtml(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── Events ────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('songSearch');
+
+  document.getElementById('logo-home').addEventListener('click', resetToScene1);
+  document.getElementById('start-over').addEventListener('click', resetToScene1);
+
+  inp.addEventListener('input', () => {
     clearTimeout(searchTimer);
-    const q = songInput.value.trim();
+    const q = inp.value.trim();
     if (q.length < 2) { closeDropdown(); return; }
     searchTimer = setTimeout(() => searchSongs(q), 420);
   });
- 
-  // Close dropdown on outside click
-  document.addEventListener('click', e => {
-    if (!e.target.closest('#scene-1')) closeDropdown();
-  });
- 
-  // Keyboard navigation in dropdown
-  songInput.addEventListener('keydown', e => {
-    const dd = document.getElementById('searchDropdown');
-    const items = dd.querySelectorAll('.dd-item');
-    if (!dd.classList.contains('open') || items.length === 0) return;
-    if (e.key === 'ArrowDown') { e.preventDefault(); items[0].focus(); }
-    if (e.key === 'Escape') { closeDropdown(); songInput.focus(); }
-  });
- 
-  document.getElementById('searchDropdown').addEventListener('keydown', e => {
+
+  document.addEventListener('click', e => { if (!e.target.closest('#scene-1')) closeDropdown(); });
+
+  inp.addEventListener('keydown', e => {
     const items = document.querySelectorAll('.dd-item');
-    const focused = document.activeElement;
-    const idx = Array.from(items).indexOf(focused);
-    if (e.key === 'ArrowDown') { e.preventDefault(); items[Math.min(idx+1, items.length-1)]?.focus(); }
-    if (e.key === 'ArrowUp') { e.preventDefault(); if (idx === 0) { document.getElementById('songSearch').focus(); } else { items[idx-1]?.focus(); } }
-    if (e.key === 'Escape') { closeDropdown(); document.getElementById('songSearch').focus(); }
+    if (!document.getElementById('searchDropdown').classList.contains('open')||!items.length) return;
+    if (e.key==='ArrowDown'){e.preventDefault();items[0].focus();}
+    if (e.key==='Escape'){closeDropdown();inp.focus();}
   });
- 
-  // Chips
-  document.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.getElementById('kbInput').value = chip.dataset.model;
-    });
+  document.getElementById('searchDropdown').addEventListener('keydown', e => {
+    const items=[...document.querySelectorAll('.dd-item')];
+    const idx=items.indexOf(document.activeElement);
+    if(e.key==='ArrowDown'){e.preventDefault();items[Math.min(idx+1,items.length-1)]?.focus();}
+    if(e.key==='ArrowUp'){e.preventDefault();idx===0?inp.focus():items[idx-1]?.focus();}
+    if(e.key==='Escape'){closeDropdown();inp.focus();}
   });
- 
-  // Generate
-  generateBtn.addEventListener('click', generateSettings);
- 
-  document.getElementById('kbInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') generateSettings();
-  });
- 
-  // Start over
-  startOver.addEventListener('click', () => {
-    selectedSong = null;
-    document.getElementById('songSearch').value = '';
-    document.getElementById('kbInput').value = '';
-    document.getElementById('badge-title').textContent = '';
-    document.getElementById('badge-artist').textContent = '';
-    document.getElementById('song-badge').classList.remove('visible');
-    clearError();
-    document.getElementById('presets-grid').innerHTML = '';
-    goToScene(1);
-    setTimeout(() => document.getElementById('songSearch').focus(), 450);
-  });
+
+  document.querySelectorAll('.chip').forEach(c =>
+    c.addEventListener('click', () => document.getElementById('kbInput').value = c.dataset.model)
+  );
+
+  document.getElementById('generateBtn').addEventListener('click', generateSettings);
+  document.getElementById('kbInput').addEventListener('keydown', e => { if(e.key==='Enter') generateSettings(); });
 });
 </script>
 </body>
