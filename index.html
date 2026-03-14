@@ -567,26 +567,40 @@ Generate 3 complete presets with voice and rhythm numbers accurate for the ${kb}
 }
 
 // ── Render results ────────────────────────────────────────────
+/**
+ * Renders the results page with song metadata and preset cards
+ * @param {Object} data - Response from Gemini API containing song analysis and presets
+ */
 function renderResults(data) {
+  // Extract song analysis and preset data from API response
   const song = data.song_analysis || {};
   const presets = data.presets || [];
   const roms = ['I','II','III'];
 
+  // Update results header with song information
   document.getElementById('rm-title').textContent = song.title || selectedSong.title;
+  
+  // Generate meta pills for song characteristics (mood, key, genre)
+  // Note: Tempo is excluded since it's consistent across all presets
   document.getElementById('rm-pills').innerHTML = [
     song.mood      ? `<span class="rm-pill">${escHtml(song.mood)}</span>` : '',
     song.key       ? `<span class="rm-pill">Key of ${escHtml(song.key)}</span>` : '',
     song.genre     ? `<span class="rm-pill">${escHtml(song.genre)}</span>` : '',
   ].filter(Boolean).join('');
 
+  // Render preset cards dynamically based on API response
   document.getElementById('presets-grid').innerHTML = presets.map((p,i) => buildCard(p,i,roms)).join('');
 
+  // Add click event listeners to all copy buttons
   document.querySelectorAll('.btn-copy').forEach(btn =>
     btn.addEventListener('click', () => copyCard(btn, parseInt(btn.dataset.idx)))
   );
 
+  // Setup carousel dots for mobile navigation
   const dotsEl = document.getElementById('carousel-dots');
   dotsEl.innerHTML = presets.map((_,i) => `<div class="carousel-dot${i===0?' active':''}"></div>`).join('');
+  
+  // Enable carousel dot navigation on mobile devices
   if (window.innerWidth <= 768) {
     const grid = document.getElementById('presets-grid');
     grid.addEventListener('scroll', () => {
@@ -595,6 +609,7 @@ function renderResults(data) {
     }, { passive:true });
   }
 
+  // Navigate to results scene
   goToScene(3);
 }
 
