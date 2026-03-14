@@ -6,7 +6,7 @@
 <title>KeyMatch — Piano Settings Finder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 /* ── TOKENS ─────────────────────────────────────────────────── */
 :root {
@@ -22,9 +22,9 @@
   --grey-3:     #2e2e3e;
   --error:      #e05555;
   --success:    #4db87a;
-  /* Typography: DM Serif Display for all headings/brand, DM Sans for all body/UI */
-  --f-head: 'DM Serif Display', Georgia, serif;
-  --f-body: 'DM Sans', system-ui, sans-serif;
+  /* FIX 4 — upgraded expressive typography */
+  --f-head: 'Cormorant Garamond', Georgia, serif;
+  --f-body: 'Space Grotesk', system-ui, sans-serif;
   --ease:   cubic-bezier(0.76, 0, 0.24, 1);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -62,14 +62,15 @@ html, body { width:100%; height:100%; overflow:hidden; background:var(--navy); c
 @keyframes sIn  { from{opacity:0;transform:translateX(44px) scale(0.97);filter:blur(5px)} to{opacity:1;transform:none;filter:none} }
 @keyframes sOut { from{opacity:1;transform:none;filter:none} to{opacity:0;transform:translateX(-36px) scale(0.98);filter:blur(4px)} }
 
-/* ── BRAND BLOCK — scenes 1 & 2 both show it ────────────────── */
-.brand-block { text-align:center; margin-bottom:52px; user-select:none; }
+/* ── BRAND BLOCK — scene 1 only ──────────────────────────────── */
+.brand-block { text-align:center; margin-bottom:52px; user-select:none; overflow: visible; }
 .brand-name {
   font-family: var(--f-head);
   font-weight: 400;
-  font-size: clamp(52px, 9vw, 100px);
-  line-height: 0.92;
-  letter-spacing: -0.03em;
+  /* FIX 4 — wider proportions for Cormorant Garamond */
+  font-size: clamp(58px, 10vw, 108px);
+  line-height: 1.2;
+  letter-spacing: -0.04em;
   background: linear-gradient(140deg, var(--amber-pale) 0%, var(--amber) 45%, var(--amber-dim) 75%, var(--amber) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -134,6 +135,26 @@ html, body { width:100%; height:100%; overflow:hidden; background:var(--navy); c
 
 /* ── SCENE 2 ─────────────────────────────────────────────────── */
 #scene-2 { padding:60px 24px; gap:0; }
+/* FIX 1 — scene 2 is positioned relative so the back button can sit in the corner */
+#scene-2 { position:absolute; }
+
+.s2-back-btn {
+  position:absolute; top:22px; left:22px;
+  background:none; border:none; padding:4px 0;
+  font-family:var(--f-body); font-size:12px; font-weight:400;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--grey); cursor:pointer;
+  transition: color 180ms ease;
+}
+.s2-back-btn:hover { color:var(--amber); }
+.s2-back-btn:focus-visible { outline:1px solid var(--amber); outline-offset:3px; }
+
+.s2-song-context {
+  font-family:var(--f-body); font-size:11px; font-weight:300;
+  font-style:italic; color:var(--grey);
+  margin-bottom:14px; display:block;
+}
+
 .s2-wrap { width:100%; max-width:520px; display:flex; flex-direction:column; align-items:flex-start; }
 
 .chips-label {
@@ -157,22 +178,29 @@ html, body { width:100%; height:100%; overflow:hidden; background:var(--navy); c
 .chip:hover { border-color:var(--amber); color:var(--amber); background:rgba(245,166,35,0.06); }
 .chip:focus-visible { outline:1px solid var(--amber); outline-offset:2px; }
 
-/* CTA — same rectangle language as inputs/chips */
+/* FIX 2 — "Find My Settings" button redesigned to match ghost-rectangle design language */
 #generateBtn {
   margin-top:32px; width:100%;
-  background:transparent; border:1px solid rgba(245,166,35,0.5);
-  color:var(--amber); font-family:var(--f-body); font-size:13px; font-weight:500;
-  letter-spacing:0.2em; text-transform:uppercase; padding:16px 24px;
-  cursor:pointer; position:relative; overflow:hidden;
-  transition:color 260ms ease;
+  background: transparent;
+  border:1px solid var(--amber);
+  color:var(--amber);
+  font-family:var(--f-head); font-style:italic; font-size:13px; font-weight:400;
+  letter-spacing:0.12em; text-transform:uppercase; padding:16px 24px;
+  cursor:pointer; position:relative;
+  border-radius:0;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  transition: background 200ms ease, color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
 }
-#generateBtn::before {
-  content:''; position:absolute; inset:0; background:var(--amber);
-  transform:translateX(-101%); transition:transform 300ms var(--ease); z-index:0;
+#generateBtn:hover {
+  background: rgba(245,166,35,0.08);
+  color: var(--amber-pale);
+  border-color: var(--amber-pale);
+  box-shadow: 0 0 28px rgba(245,166,35,0.12);
 }
-#generateBtn span { position:relative; z-index:1; }
-#generateBtn:hover { color:var(--navy); }
-#generateBtn:hover::before { transform:translateX(0); }
+#generateBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 0 12px rgba(245,166,35,0.1);
+}
 #generateBtn:disabled { opacity:0.35; cursor:not-allowed; pointer-events:none; }
 #generateBtn:focus-visible { outline:1px solid var(--amber); outline-offset:3px; }
 
@@ -185,56 +213,12 @@ html, body { width:100%; height:100%; overflow:hidden; background:var(--navy); c
 }
 .error-box span { color:var(--error); flex-shrink:0; }
 
-/* ── TOP BAR — scene 3 only ─────────────────────────────────── */
-#top-bar {
-  position:fixed; top:0; left:0; right:0; height:52px;
-  display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
-  padding:0 28px; border-bottom:1px solid rgba(245,166,35,0.1);
-  background:rgba(13,15,26,0.9);
-  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-  z-index:10; opacity:0; pointer-events:none; transform:translateY(-52px);
-  transition:opacity 350ms ease, transform 350ms var(--ease);
-}
-#top-bar.visible { opacity:1; pointer-events:all; transform:translateY(0); }
-
-.top-logo {
-  font-family:var(--f-head); font-size:15px; font-weight:400; letter-spacing:0.04em;
-  color:var(--amber); background:none; border:none; padding:0;
-  cursor:pointer; justify-self:start;
-  transition:color 200ms ease;
-  /* no underline on click - remove ::after entirely */
-}
-.top-logo:hover { color:var(--amber-pale); }
-.top-logo:focus-visible { outline:1px solid var(--amber); outline-offset:4px; }
-
-#song-badge {
-  display:flex; align-items:center; gap:12px;
-  opacity:0; transform:translateY(-4px);
-  transition:opacity 350ms ease 100ms, transform 350ms ease 100ms;
-  justify-self:center;
-}
-#song-badge.visible { opacity:1; transform:translateY(0); }
-.badge-vr { width:1px; height:22px; background:rgba(245,166,35,0.3); flex-shrink:0; }
-.badge-text { text-align:center; line-height:1.3; }
-.badge-song   { font-family:var(--f-head); font-size:13px; font-weight:400; color:var(--warm-white); }
-.badge-artist { font-family:var(--f-body);  font-size:11px; font-weight:300; color:var(--grey); }
-
-#start-over {
-  font-family:var(--f-body); font-size:10px; font-weight:400;
-  letter-spacing:0.14em; text-transform:uppercase; color:var(--grey-2);
-  background:none; border:none; cursor:pointer; padding:4px 0;
-  position:relative; justify-self:end; transition:color 200ms ease; display:none;
-}
-#start-over::after { content:''; position:absolute; bottom:0; left:0; right:100%; height:1px; background:var(--amber); transition:right 260ms ease; }
-#start-over:hover { color:var(--amber); }
-#start-over:hover::after { right:0; }
-#start-over:focus-visible { outline:1px solid var(--amber); outline-offset:4px; }
 
 /* ── SCENE 3 ─────────────────────────────────────────────────── */
-#scene-3 { padding:52px 0 0; justify-content:flex-start; align-items:stretch; }
+#scene-3 { padding:24px 0 0; justify-content:flex-start; align-items:stretch; }
 #results-inner {
   flex:1; width:100%; max-width:1320px; margin:0 auto;
-  display:flex; flex-direction:column; height:calc(100vh - 52px); padding:0 16px;
+  display:flex; flex-direction:column; height:calc(100vh - 24px); padding:0 16px;
 }
 
 #results-meta {
@@ -242,9 +226,10 @@ html, body { width:100%; height:100%; overflow:hidden; background:var(--navy); c
   display:flex; align-items:center; gap:8px; flex-wrap:wrap;
   border-bottom:1px solid rgba(245,166,35,0.1); flex-shrink:0;
 }
+/* FIX 4 — rm-title larger size */
 .rm-title {
   font-family:var(--f-head); font-weight:400; font-style:italic;
-  font-size:clamp(16px,2vw,21px); color:var(--warm-white); letter-spacing:-0.01em; margin-right:4px;
+  font-size:clamp(18px,2.2vw,24px); color:var(--warm-white); letter-spacing:-0.01em; margin-right:4px;
 }
 .rm-pill {
   font-family:var(--f-body); font-size:11px; font-weight:400; letter-spacing:0.04em;
@@ -252,26 +237,31 @@ html, body { width:100%; height:100%; overflow:hidden; background:var(--navy); c
   border:1px solid rgba(245,166,35,0.14); background:rgba(245,166,35,0.04);
 }
 
-/* Cards */
+/* FIX 3 — Cards: glass-float treatment */
 #presets-grid {
-  flex:1; display:flex; gap:1px; background:rgba(245,166,35,0.05);
+  flex:1; display:flex; gap:4px; background:transparent;
   overflow:hidden; min-height:0;
 }
 .preset-card {
   flex:1; display:flex; flex-direction:column;
-  background:var(--navy-2); min-width:0; overflow:hidden;
+  background:rgba(20, 23, 38, 0.55);
+  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  border:1px solid rgba(245,166,35,0.10);
+  border-top:1px solid rgba(245,166,35,0.20);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.45), 0 1px 0 rgba(245,166,35,0.07) inset;
+  min-width:0; overflow:hidden;
 }
 .card-header {
   padding:14px 18px 11px;
-  border-top:1px solid rgba(245,166,35,0.32);
-  background:rgba(245,166,35,0.025); flex-shrink:0;
+  background:rgba(245,166,35,0.03); flex-shrink:0;
 }
 .card-ordinal {
   font-family:var(--f-body); font-size:9px; font-weight:500;
   letter-spacing:0.3em; text-transform:uppercase; color:var(--grey-2); margin-bottom:3px;
 }
+/* FIX 4 — card-name light italic */
 .card-name {
-  font-family:var(--f-head); font-weight:400; font-style:italic;
+  font-family:var(--f-head); font-weight:300; font-style:italic;
   font-size:clamp(14px,1.5vw,18px); color:var(--warm-white); line-height:1.2; margin-bottom:3px;
 }
 .card-desc {
@@ -325,8 +315,9 @@ html, body { width:100%; height:100%; overflow:hidden; background:var(--navy); c
 .loader-ring { width:52px; height:52px; }
 .loader-ring svg { animation:spin 1.6s linear infinite; width:100%; height:100%; }
 @keyframes spin { to{transform:rotate(360deg)} }
+/* FIX 4 — loading text uses Cormorant Garamond italic at 15px */
 .loading-text {
-  font-family:var(--f-head); font-style:italic; font-size:14px; color:var(--grey); letter-spacing:0.08em;
+  font-family:var(--f-head); font-style:italic; font-size:15px; color:var(--grey); letter-spacing:0.08em;
   animation:tFade 2s ease-in-out infinite;
 }
 @keyframes tFade { 0%,100%{opacity:0.35} 50%{opacity:1} }
@@ -335,7 +326,8 @@ html, body { width:100%; height:100%; overflow:hidden; background:var(--navy); c
 @media (max-width:768px) {
   #presets-grid { flex-direction:row; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; background:transparent; gap:0; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
   #presets-grid::-webkit-scrollbar { display:none; }
-  .preset-card { min-width:100%; scroll-snap-align:start; }
+  /* FIX 3 — cards float inside the viewport on mobile */
+  .preset-card { min-width:100%; scroll-snap-align:start; margin:0 12px; }
   #carousel-dots { display:flex; justify-content:center; gap:6px; padding:8px; flex-shrink:0; }
   .carousel-dot { width:18px; height:2px; background:rgba(245,166,35,0.2); transition:background 200ms,width 200ms; }
   .carousel-dot.active { background:var(--amber); width:28px; }
@@ -353,19 +345,6 @@ button { cursor:pointer; }
   <div id="bg-base"></div><div id="bg-grid"></div><div id="bg-vignette"></div><div id="bg-noise"></div>
 </div>
 
-<!-- Top bar — scene 3 only, no song badge in scene 2 -->
-<div id="top-bar" role="banner">
-  <button class="top-logo" id="logo-home" aria-label="Return to home">KeyMatch</button>
-  <div id="song-badge" aria-live="polite">
-    <div class="badge-vr"></div>
-    <div class="badge-text">
-      <div class="badge-song"   id="badge-title"></div>
-      <div class="badge-artist" id="badge-artist"></div>
-    </div>
-    <div class="badge-vr"></div>
-  </div>
-  <button id="start-over" aria-label="Start over">Start Over</button>
-</div>
 
 <div id="stage">
 
@@ -389,13 +368,11 @@ button { cursor:pointer; }
     </div>
   </section>
 
-  <!-- Scene 2: Keyboard — brand block stays, song badge removed, NO top bar -->
+  <!-- FIX 1 — Scene 2: brand block removed; back button + song context added -->
   <section id="scene-2" class="scene" aria-label="Enter your keyboard model">
-    <div class="brand-block">
-      <span class="brand-name">KeyMatch</span>
-      <span class="brand-tagline">Find the perfect settings for your keyboard</span>
-    </div>
+    <button class="s2-back-btn" onclick="resetToScene1()" aria-label="Back to song search">← Back</button>
     <div class="s2-wrap">
+      <span class="s2-song-context" id="s2-song-context"></span>
       <label for="kbInput" class="field-label">Your Keyboard Model</label>
       <input id="kbInput" class="text-input" type="text" autocomplete="off" spellcheck="false"
         placeholder="e.g. Yamaha PSR-E373, Casio CT-X700…" aria-label="Keyboard model"
@@ -414,8 +391,10 @@ button { cursor:pointer; }
         <button class="chip" data-model="Roland FP-30X">Roland FP-30X</button>
       </div>
 
+      <!-- FIX 2 — ghost-rectangle button with arrow glyph -->
       <button id="generateBtn" aria-label="Generate keyboard settings">
         <span>Find My Settings</span>
+        <span aria-hidden="true">→</span>
       </button>
     </div>
     <div id="errorBox" aria-live="polite"></div>
@@ -469,18 +448,12 @@ function goToScene(n) {
   next.classList.add('entering');
   next.addEventListener('animationend', () => { next.classList.remove('entering'); next.classList.add('active'); }, { once: true });
   currentScene = n;
-  // top bar + start-over only in scene 3
-  document.getElementById('top-bar').classList.toggle('visible', n === 3);
-  document.getElementById('start-over').style.display = (n === 3) ? '' : 'none';
 }
 
 function resetToScene1() {
   selectedSong = null;
   document.getElementById('songSearch').value  = '';
   document.getElementById('kbInput').value     = '';
-  document.getElementById('badge-title').textContent  = '';
-  document.getElementById('badge-artist').textContent = '';
-  document.getElementById('song-badge').classList.remove('visible');
   clearError();
   document.getElementById('presets-grid').innerHTML = '';
   goToScene(1);
@@ -535,11 +508,9 @@ function renderDropdown(songs) {
 function selectSong(el) {
   selectedSong = { title:el.dataset.title, artist:el.dataset.artist, year:el.dataset.year, genre:el.dataset.genre };
   document.getElementById('songSearch').value = `${selectedSong.title} — ${selectedSong.artist}`;
+  // FIX 1 — update the song context line in scene 2
+  document.getElementById('s2-song-context').textContent = `${selectedSong.title} — ${selectedSong.artist}`;
   closeDropdown();
-  // badge is for scene 3 top bar only
-  document.getElementById('badge-title').textContent  = selectedSong.title;
-  document.getElementById('badge-artist').textContent = selectedSong.artist;
-  document.getElementById('song-badge').classList.add('visible');
   goToScene(2);
   setTimeout(() => document.getElementById('kbInput').focus(), 450);
 }
@@ -764,9 +735,6 @@ function escHtml(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&
 // ── Events ────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   const inp = document.getElementById('songSearch');
-
-  document.getElementById('logo-home').addEventListener('click', resetToScene1);
-  document.getElementById('start-over').addEventListener('click', resetToScene1);
 
   inp.addEventListener('input', () => {
     clearTimeout(searchTimer);
