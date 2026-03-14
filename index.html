@@ -431,43 +431,131 @@ html, body {
  
 /* CTA Button */
 #generateBtn {
-  margin-top: 36px;
+  margin-top: 40px;
   width: 100%;
   background: transparent;
-  border: 1px solid var(--amber);
+  border: none;
   color: var(--amber);
-  font-family: var(--font-display);
-  font-size: clamp(18px, 3vw, 26px);
-  font-style: italic;
-  letter-spacing: 0.04em;
-  padding: 18px 32px;
+  padding: 0;
   cursor: pointer;
   position: relative;
-  overflow: hidden;
-  transition: color 280ms ease, background 280ms ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  outline: none;
 }
- 
-#generateBtn::before {
+
+/* Corner ticks */
+#generateBtn::before,
+#generateBtn::after {
   content: '';
+  position: absolute;
+  width: 10px; height: 10px;
+  transition: width 300ms ease, height 300ms ease, opacity 300ms ease;
+  opacity: 0.45;
+  z-index: 2;
+}
+#generateBtn::before {
+  top: 0; left: 0;
+  border-top: 1px solid var(--amber);
+  border-left: 1px solid var(--amber);
+}
+#generateBtn::after {
+  bottom: 0; right: 0;
+  border-bottom: 1px solid var(--amber);
+  border-right: 1px solid var(--amber);
+}
+#generateBtn:hover::before,
+#generateBtn:hover::after {
+  width: 20px; height: 20px; opacity: 1;
+}
+
+.btn-inner {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  padding: 22px 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Shimmer sweep on hover */
+.btn-inner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 55%; height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(245,166,35,0.1) 50%,
+    transparent 80%
+  );
+  transform: skewX(-15deg);
+  transition: left 560ms cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+#generateBtn:hover .btn-inner::before { left: 170%; }
+
+/* Horizontal amber rule between lines */
+.btn-rule {
+  width: 28px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--amber), transparent);
+  opacity: 0.7;
+  transition: width 350ms ease, opacity 300ms ease;
+  flex-shrink: 0;
+}
+#generateBtn:hover .btn-rule { width: 80%; opacity: 0.4; }
+
+.btn-label-main {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(22px, 3.5vw, 30px);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--amber);
+  position: relative; z-index: 1;
+  transition: color 280ms ease, letter-spacing 320ms ease;
+}
+#generateBtn:hover .btn-label-main {
+  color: var(--amber-bright);
+  letter-spacing: 0.04em;
+}
+
+.btn-label-sub {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--warm-grey-2);
+  position: relative; z-index: 1;
+  transition: color 280ms ease, letter-spacing 320ms ease;
+}
+#generateBtn:hover .btn-label-sub {
+  color: var(--amber-dim);
+  letter-spacing: 0.38em;
+}
+
+/* Top + bottom border only — asymmetric feel */
+.btn-frame {
   position: absolute; inset: 0;
-  background: var(--amber);
-  transform: translateX(-102%);
-  transition: transform 320ms var(--transition-scene);
-  z-index: 0;
+  border-top: 1px solid rgba(245,166,35,0.22);
+  border-bottom: 1px solid rgba(245,166,35,0.22);
+  transition: border-color 280ms ease;
+  pointer-events: none;
 }
- 
-#generateBtn span { position: relative; z-index: 1; }
- 
-#generateBtn:hover {
-  color: var(--navy);
+#generateBtn:hover .btn-frame {
+  border-color: rgba(245,166,35,0.55);
 }
-#generateBtn:hover::before { transform: translateX(0); }
- 
+
 #generateBtn:disabled {
-  opacity: 0.4; cursor: not-allowed;
+  opacity: 0.3; cursor: not-allowed;
+  pointer-events: none;
 }
-#generateBtn:disabled::before { display: none; }
-#generateBtn:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+#generateBtn:focus-visible { outline: 1px solid var(--amber); outline-offset: 4px; }
  
 /* ── Error in scene 2 ── */
 #errorBox {
@@ -875,7 +963,12 @@ button { cursor: pointer; }
       </div>
  
       <button id="generateBtn" aria-label="Generate keyboard settings">
-        <span>Find My Settings</span>
+        <div class="btn-frame" aria-hidden="true"></div>
+        <div class="btn-inner">
+          <span class="btn-label-main">Find My Settings</span>
+          <div class="btn-rule" aria-hidden="true"></div>
+          <span class="btn-label-sub">Generate Presets</span>
+        </div>
       </button>
     </div>
  
