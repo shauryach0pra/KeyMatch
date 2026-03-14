@@ -6,7 +6,7 @@
 <title>KeyMatch — Piano Settings Finder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 /* ── TOKENS ─────────────────────────────────────────────────── */
 :root {
@@ -23,7 +23,7 @@
   --error:      #e05555;
   --success:    #4db87a;
   /* FIX 4 — upgraded expressive typography */
-  --f-head: 'Cormorant Garamond', Georgia, serif;
+  --f-head: 'Playfair Display', Georgia, serif;
   --f-body: 'Space Grotesk', system-ui, sans-serif;
   --ease:   cubic-bezier(0.76, 0, 0.24, 1);
 }
@@ -58,19 +58,19 @@ html, body { width:100%; height:100%; overflow:hidden; background:var(--navy); c
 .scene.active { opacity:1; pointer-events:all; }
 .scene.entering { animation: sIn  420ms var(--ease) forwards; }
 .scene.exiting  { animation: sOut 360ms var(--ease) forwards; }
-/* card-shuffle: slides horizontally */
-@keyframes sIn  { from{opacity:0;transform:translateX(44px) scale(0.97);filter:blur(5px)} to{opacity:1;transform:none;filter:none} }
-@keyframes sOut { from{opacity:1;transform:none;filter:none} to{opacity:0;transform:translateX(-36px) scale(0.98);filter:blur(4px)} }
+/* card-shuffle: scrolls vertically */
+@keyframes sIn  { from{opacity:0;transform:translateY(44px) scale(0.97);filter:blur(5px)} to{opacity:1;transform:none;filter:none} }
+@keyframes sOut { from{opacity:1;transform:none;filter:none} to{opacity:0;transform:translateY(-36px) scale(0.98);filter:blur(4px)} }
 
 /* ── BRAND BLOCK — scene 1 only ──────────────────────────────── */
 .brand-block { text-align:center; margin-bottom:52px; user-select:none; overflow: visible; }
 .brand-name {
   font-family: var(--f-head);
-  font-weight: 400;
-  /* FIX 4 — wider proportions for Cormorant Garamond */
+  font-weight: 700;
+  /* FIX 4 — wider proportions for Playfair Display */
   font-size: clamp(58px, 10vw, 108px);
   line-height: 1.2;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
   background: linear-gradient(140deg, var(--amber-pale) 0%, var(--amber) 45%, var(--amber-dim) 75%, var(--amber) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -111,6 +111,7 @@ html, body { width:100%; height:100%; overflow:hidden; background:var(--navy); c
 @keyframes phPulse { 0%,100%{opacity:0.45} 50%{opacity:1} }
 .field-icon { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--grey-2); pointer-events:none; }
 
+
 /* ── SCENE 1 ─────────────────────────────────────────────────── */
 #scene-1 { padding:60px 24px; gap:0; }
 
@@ -134,20 +135,8 @@ html, body { width:100%; height:100%; overflow:hidden; background:var(--navy); c
 @keyframes ddIn { to{opacity:1;transform:none} }
 
 /* ── SCENE 2 ─────────────────────────────────────────────────── */
-#scene-2 { padding:60px 24px; gap:0; }
-/* FIX 1 — scene 2 is positioned relative so the back button can sit in the corner */
-#scene-2 { position:absolute; }
+#scene-2 { padding:80px 24px 60px; gap:0; }
 
-.s2-back-btn {
-  position:absolute; top:22px; left:22px;
-  background:none; border:none; padding:4px 0;
-  font-family:var(--f-body); font-size:12px; font-weight:400;
-  letter-spacing:0.1em; text-transform:uppercase;
-  color:var(--grey); cursor:pointer;
-  transition: color 180ms ease;
-}
-.s2-back-btn:hover { color:var(--amber); }
-.s2-back-btn:focus-visible { outline:1px solid var(--amber); outline-offset:3px; }
 
 .s2-song-context {
   font-family:var(--f-body); font-size:11px; font-weight:300;
@@ -184,7 +173,7 @@ html, body { width:100%; height:100%; overflow:hidden; background:var(--navy); c
   background: transparent;
   border:1px solid var(--amber);
   color:var(--amber);
-  font-family:var(--f-head); font-style:italic; font-size:13px; font-weight:400;
+  font-family:var(--f-body); font-size:13px; font-weight:400;
   letter-spacing:0.12em; text-transform:uppercase; padding:16px 24px;
   cursor:pointer; position:relative;
   border-radius:0;
@@ -348,6 +337,7 @@ button { cursor:pointer; }
 
 <div id="stage">
 
+  
   <!-- Scene 1: Search -->
   <section id="scene-1" class="scene active" aria-label="Search for a song">
     <div class="brand-block">
@@ -370,9 +360,8 @@ button { cursor:pointer; }
 
   <!-- FIX 1 — Scene 2: brand block removed; back button + song context added -->
   <section id="scene-2" class="scene" aria-label="Enter your keyboard model">
-    <button class="s2-back-btn" onclick="resetToScene1()" aria-label="Back to song search">← Back</button>
-    <div class="s2-wrap">
-      <span class="s2-song-context" id="s2-song-context"></span>
+        <div class="s2-wrap">
+            <span class="s2-song-context" id="s2-song-context"></span>
       <label for="kbInput" class="field-label">Your Keyboard Model</label>
       <input id="kbInput" class="text-input" type="text" autocomplete="off" spellcheck="false"
         placeholder="e.g. Yamaha PSR-E373, Casio CT-X700…" aria-label="Keyboard model"
@@ -409,7 +398,6 @@ button { cursor:pointer; }
       </div>
       <div id="presets-grid" role="list" aria-label="Keyboard presets"></div>
       <div id="carousel-dots" aria-hidden="true"></div>
-      <div id="s3-footer">KeyMatch &mdash; Piano Settings Finder</div>
     </div>
   </section>
 
@@ -456,6 +444,9 @@ function resetToScene1() {
   document.getElementById('kbInput').value     = '';
   clearError();
   document.getElementById('presets-grid').innerHTML = '';
+  document.getElementById('rm-title').textContent = '';
+  document.getElementById('rm-pills').innerHTML = '';
+  document.getElementById('carousel-dots').innerHTML = '';
   goToScene(1);
   setTimeout(() => document.getElementById('songSearch').focus(), 450);
 }
@@ -508,9 +499,18 @@ function renderDropdown(songs) {
 function selectSong(el) {
   selectedSong = { title:el.dataset.title, artist:el.dataset.artist, year:el.dataset.year, genre:el.dataset.genre };
   document.getElementById('songSearch').value = `${selectedSong.title} — ${selectedSong.artist}`;
-  // FIX 1 — update the song context line in scene 2
   document.getElementById('s2-song-context').textContent = `${selectedSong.title} — ${selectedSong.artist}`;
   closeDropdown();
+
+  // FIX 1 — brand exit animation: wordmark flies up, anchor fades in
+  const brandBlock = document.querySelector('#scene-1 .brand-block');
+  brandBlock.classList.remove('brand-block--enter');
+  brandBlock.classList.add('brand-block--exit');
+  brandBlock.addEventListener('animationend', () => {
+    brandBlock.classList.remove('brand-block--exit', 'brand-block--enter');
+  }, { once: true });
+  setTimeout(() => { document.getElementById('brand-anchor').classList.add('visible'); }, 20);
+
   goToScene(2);
   setTimeout(() => document.getElementById('kbInput').focus(), 450);
 }
@@ -575,7 +575,6 @@ function renderResults(data) {
   document.getElementById('rm-title').textContent = song.title || selectedSong.title;
   document.getElementById('rm-pills').innerHTML = [
     song.mood      ? `<span class="rm-pill">${escHtml(song.mood)}</span>` : '',
-    song.tempo_bpm ? `<span class="rm-pill">${song.tempo_bpm} BPM</span>` : '',
     song.key       ? `<span class="rm-pill">Key of ${escHtml(song.key)}</span>` : '',
     song.genre     ? `<span class="rm-pill">${escHtml(song.genre)}</span>` : '',
   ].filter(Boolean).join('');
