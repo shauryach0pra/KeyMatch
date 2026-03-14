@@ -614,12 +614,8 @@ function renderResults(data) {
 }
 
 function buildCard(p, i, roms) {
-  // voice row: name inline with #number
-  const vn = p.voice?.voice_number ? ` <span class="sr-num">#${escHtml(String(p.voice.voice_number))}</span>` : '';
-  // dual voice
-  const dn = (p.dual?.enabled && p.dual?.voice_number) ? ` <span class="sr-num">#${escHtml(String(p.dual.voice_number))}</span>` : '';
-  // rhythm
-  const rn = p.rhythm?.style_number ? ` <span class="sr-num">#${escHtml(String(p.rhythm.style_number))}</span>` : '';
+  // Note: Voice numbers removed due to accuracy issues
+  // Voice names and settings are preserved for usability
 
   return `
   <div class="preset-card" role="listitem">
@@ -633,7 +629,7 @@ function buildCard(p, i, roms) {
       <div class="settings-group">
         <div class="sg-title">Voice</div>
         <div class="setting-row">
-          <span class="sr-key">Main Voice</span>${vn}
+          <span class="sr-key">Main Voice</span>
           <span class="sr-dots" aria-hidden="true"></span>
           <span class="sr-val">${escHtml(p.voice?.main_voice||'—')}</span>
         </div>
@@ -645,7 +641,7 @@ function buildCard(p, i, roms) {
       <div class="settings-group">
         <div class="sg-title">Dual Voice</div>
         <div class="setting-row">
-          <span class="sr-key">Voice</span>${dn}
+          <span class="sr-key">Voice</span>
           <span class="sr-dots" aria-hidden="true"></span>
           <span class="sr-val">${escHtml(p.dual?.voice||'—')}</span>
         </div>
@@ -655,7 +651,7 @@ function buildCard(p, i, roms) {
       <div class="settings-group">
         <div class="sg-title">Rhythm &amp; Tempo</div>
         <div class="setting-row">
-          <span class="sr-key">Style</span>${rn}
+          <span class="sr-key">Style</span>
           <span class="sr-dots" aria-hidden="true"></span>
           <span class="sr-val">${escHtml(p.rhythm?.style||'—')}</span>
         </div>
