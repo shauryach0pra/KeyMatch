@@ -300,7 +300,8 @@
 //  !! REPLACE THIS with your actual Cloudflare Worker URL after deploying !!
 //  e.g. https://keymatch-api.yourname.workers.dev
 // ─────────────────────────────────────────────────────────────────────────────
-const WORKER_URL = 'https://keymatch-api.shaurya-chopra.workers.dev/api/gemini';
+const WORKER_URL = 'https://keymatch-api.shaurya-chopra.workers.dev';
+
 let selectedSong = null;
 let searchTimeout = null;
 let isSearching = false;
@@ -491,19 +492,15 @@ Keyboard model: ${kb}
 Analyze this song deeply and produce 3 complete preset configurations for the ${kb}. Use voice names and rhythm style names that genuinely exist on this keyboard model.`;
 
   try {
-  const raw = await callGemini(prompt, system);
-  let data;
-  try {
-    const clean = raw.replace(/```json\n?|```\n?/gi, '').trim();
-    const match = clean.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error('No JSON object found');
-    data = JSON.parse(match[0]);
-  } catch (parseErr) {
-    console.error('Raw response:', raw); // helps debug
-    throw new Error('Could not parse response. Please try again.');
-  }
-  renderResults(data);
-} catch (err) {
+    const raw = await callGemini(prompt, system);
+    let data;
+    try {
+      const clean = raw.replace(/```json|```/g, '').trim();
+      const match = clean.match(/\{[\s\S]*\}/);
+      data = JSON.parse(match ? match[0] : clean);
+    } catch { throw new Error('Could not parse response. Please try again.'); }
+    renderResults(data);
+  } catch (err) {
     showError(err.message);
   } finally {
     setLoading(false);
