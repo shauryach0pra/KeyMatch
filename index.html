@@ -495,18 +495,13 @@ Analyze this song deeply and produce 3 complete preset configurations for the ${
     const raw = await callGemini(prompt, system);
     let data;
     try {
-      let clean = String(raw).trim();
-clean = clean.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
-if (clean.startsWith('"') && clean.endsWith('"')) {
-  try { clean = JSON.parse(clean); } catch(e) { clean = clean.slice(1, -1); }
-}
-clean = String(clean).trim();
-const start = clean.indexOf('{');
-const end = clean.lastIndexOf('}');
-if (start === -1 || end === -1) throw new Error('no json found');
-data = JSON.parse(clean.slice(start, end + 1));
+      // Groq returns clean JSON — just parse directly
+      const start = raw.indexOf('{');
+      const end = raw.lastIndexOf('}');
+      if (start === -1 || end === -1) throw new Error('no json found');
+      data = JSON.parse(raw.slice(start, end + 1));
     } catch (e) {
-      console.error('Raw Gemini response:', raw);
+      console.error('Raw response:', raw);
       throw new Error('Could not parse response. Please try again.');
     }
     renderResults(data);
